@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Viewings master dashboard — Homey</title>
+  <title>Morning dashboard — Homey Agency</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -268,467 +268,167 @@
     .radar-item strong { color: var(--fg-strong); font-size: var(--text-body-size); display: block; }
     .radar-item span { color: var(--fg-muted); }
 
-    .iter-mount { min-height: 120px; }
+    .iter-mount { min-height: 120px; height: 100%; }
+
+    /* ── Iteration 1: Master list (transactions-style) ── */
+    .master-dashboard {
+      display: flex; flex-direction: column;
+      min-height: 100%; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .stats-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-subtle); flex-wrap: wrap;
+    }
+    .stats-user { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+    .stats-user-text { font-size: var(--fs-sm); color: var(--fg-strong); font-weight: 600; }
+    .stats-user-role { font-weight: 400; color: var(--fg-muted); }
+    .stats-kpis { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
+    .kpi { font-size: var(--fs-xs); color: var(--fg-muted); white-space: nowrap; }
+    .kpi strong {
+      display: block; font-size: var(--fs-md); font-weight: 700;
+      color: var(--fg-strong); font-variant-numeric: tabular-nums;
+    }
+    .stats-actions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-left: auto; }
+    .search-row {
+      display: flex; align-items: center; gap: var(--space-2);
+      flex: 1; min-width: 240px; max-width: 480px;
+    }
+    .search-row select.input { width: auto; min-width: 140px; font-size: var(--fs-xs); padding: 8px 10px; }
+    .search-field {
+      flex: 1; display: flex; align-items: center; gap: 8px;
+      padding: 0 10px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .search-field input {
+      flex: 1; border: 0; outline: 0; padding: 8px 0;
+      font-size: var(--fs-sm); background: transparent; color: var(--fg-strong);
+    }
+    .search-field input::placeholder { color: var(--fg-muted); }
+    .search-field svg { color: var(--fg-muted); flex-shrink: 0; width: 16px; height: 16px; }
+    .dashboard-scroll {
+      flex: 1; overflow: auto; padding: var(--space-4) var(--space-5) var(--space-5); min-height: 0;
+    }
+    .section-heading {
+      display: flex; align-items: center; gap: 6px;
+      font-size: var(--fs-lg); font-weight: 600; color: var(--fg-strong);
+      margin-bottom: var(--space-3);
+    }
+    .section-heading svg { color: var(--fg-muted); }
+    .status-tabs {
+      display: flex; flex-wrap: wrap; gap: 0;
+      border-bottom: 1px solid var(--border); margin-bottom: var(--space-3);
+    }
+    .status-tab {
+      padding: 10px 14px; border: 0; background: transparent;
+      font-size: var(--fs-sm); font-weight: 500; color: var(--fg-muted);
+      cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -1px; white-space: nowrap; font-family: inherit;
+    }
+    .status-tab:hover { color: var(--fg-strong); }
+    .status-tab.is-active {
+      color: var(--purple-700); border-bottom-color: var(--purple-600); font-weight: 600;
+    }
+    .status-tab .tab-count { color: var(--fg-muted); font-weight: 500; }
+    .filter-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap;
+    }
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: var(--radius-full);
+      border: 1px solid var(--purple-200); background: var(--purple-50);
+      font-size: var(--fs-xs); font-weight: 600; color: var(--purple-700);
+      cursor: pointer; font-family: inherit;
+    }
+    .filter-chip .chip-count {
+      background: var(--purple-600); color: var(--bg);
+      min-width: 16px; height: 16px; border-radius: var(--radius-full);
+      font-size: 10px; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .filter-links { font-size: var(--fs-xs); color: var(--fg-muted); display: flex; gap: 12px; }
+    .filter-links button {
+      background: none; border: 0; color: var(--purple-700); font-weight: 600;
+      cursor: pointer; font-size: inherit; padding: 0; font-family: inherit;
+    }
+    .filter-links button:hover { text-decoration: underline; }
+    .view-as { display: flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--fg-muted); }
+    .view-as select.input { font-size: var(--fs-xs); padding: 6px 28px 6px 10px; min-width: 140px; }
+    .master-table-wrap {
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      overflow: auto; background: var(--bg);
+    }
+    .master-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+    .master-table th {
+      text-align: left; font-weight: 600; font-size: var(--fs-xs);
+      padding: 10px 12px; background: var(--bg-subtle);
+      color: var(--fg-strong); border-bottom: 1px solid var(--border);
+      white-space: nowrap; position: sticky; top: 0; z-index: 1;
+    }
+    .master-table td {
+      padding: 12px; border-bottom: 1px solid var(--slate-100);
+      color: var(--fg); vertical-align: middle;
+    }
+    .master-table tbody tr:hover td { background: var(--slate-50); }
+    .master-table tbody tr.is-selected td { background: var(--purple-50); }
+    .master-table tbody tr.is-clickable-viewing { cursor: pointer; }
+    .master-table tbody tr:last-child td { border-bottom: 0; }
+    .th-check, .td-check { width: 36px; }
+    .case-link {
+      color: var(--purple-700); font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs);
+    }
+    .case-link:hover { text-decoration: underline; }
+    .case-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .td-applicant { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+    .td-applicant .avatar { width: 28px; height: 28px; font-size: 10px; flex-shrink: 0; }
+    .td-address { font-size: var(--fs-xs); line-height: 1.45; color: var(--fg); max-width: 200px; }
+    .td-agent { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .td-agent .avatar { width: 24px; height: 24px; font-size: 9px; flex-shrink: 0; }
+    .td-datetime { white-space: nowrap; font-size: var(--fs-xs); }
+    .td-datetime strong { display: block; color: var(--fg-strong); font-weight: 600; }
+    .td-datetime span { color: var(--fg-muted); }
+    .fb-missing { color: var(--danger-600); font-weight: 600; font-size: var(--fs-xs); }
+    .fb-done { color: var(--success-600); font-weight: 600; font-size: var(--fs-xs); }
+    .fb-na { color: var(--fg-muted); font-size: var(--fs-xs); }
+    .offer-cell { font-weight: 600; font-size: var(--fs-xs); color: var(--fg-strong); font-variant-numeric: tabular-nums; }
+    .offer-cell.is-hot { color: var(--success-600); }
+    .table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-top: 1px solid var(--border);
+      font-size: var(--fs-xs); color: var(--fg-muted);
+    }
+    .action-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: var(--radius-full);
+      background: var(--danger-50); border: 1px solid var(--danger-200);
+      color: var(--danger-700); font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.02em;
+    }
 
     .dashboard-body {
       grid-column: 2; grid-row: 3;
-      display: flex; gap: var(--space-6);
       min-height: 0; overflow: hidden;
       padding: var(--space-6);
-      align-items: stretch;
     }
     .dashboard-canvas {
-      flex: 1; min-width: 0; overflow-y: auto;
+      height: 100%; min-width: 0; overflow-y: auto;
     }
-    .dashboard-canvas .iteration-panel.is-active { display: block; }
+    .dashboard-canvas .iteration-panel.is-active { display: block; height: 100%; }
 
-    .is-clickable-viewing { cursor: pointer; transition: background var(--dur-fast), border-color var(--dur-fast); }
+    .is-clickable-viewing { cursor: pointer; transition: background var(--dur-fast); }
     .runway-card.is-clickable-viewing:hover { background: var(--slate-50); }
-    .runway-card.is-selected, .dispatch-chip.is-selected, .portfolio-next.is-selected,
-    .task-card.is-selected, .health-matrix tbody tr.is-selected, .radar-item.is-selected {
-      outline: 2px solid var(--purple-400);
-      background: var(--purple-50);
-    }
     .dispatch-chip.is-clickable-viewing { cursor: pointer; }
     .dispatch-chip.is-clickable-viewing:hover { background: var(--slate-50); }
     .health-matrix tbody tr.is-clickable-viewing { cursor: pointer; }
+    .health-matrix tbody tr.is-clickable-viewing:hover td { background: var(--slate-50); }
     .radar-item.is-clickable-viewing { cursor: pointer; }
     .radar-item.is-clickable-viewing:hover { background: var(--slate-100); }
-
-    @media (max-width: 1100px) {
-      .dashboard-body { flex-direction: column; overflow-y: auto; }
-      .viewing-detail-dock { width: 100% !important; max-height: 50vh; }
-    }
-
-    /* Status badges */
-    .vf-badge {
-      display: inline-flex; align-items: center; gap: var(--space-1);
-      height: auto; padding: var(--space-1) var(--space-3);
-      border-radius: var(--radius-md);
-      border: 1px solid transparent;
-      font-size: var(--text-info-label-size); font-weight: var(--fw-semibold); line-height: 1.5;
-      white-space: nowrap;
-    }
-    .vf-badge svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .badge-scheduled  { background: #f8fafc; border-color: #e2e8f0; color: #64748b; }
-    .badge-confirmed  { background: #dbeafe; border-color: #bfdbfe; color: #2563eb; }
-    .badge-completed  { background: var(--success-50); border-color: #6ee7b7; color: var(--success-600); }
-    .badge-no-show    { background: #fef2f2; border-color: #fecaca; color: #ef4444; }
-    .badge-cancelled  { background: #fef7ec; border-color: #fbd3a7; color: #ff7214; }
-
-    /* Offer badges on completed cards — Figma 4172:22372 */
-    .vf-offer-badge {
-      display: inline-flex; align-items: center; gap: var(--space-1);
-      padding: var(--space-1) var(--space-3);
-      border-radius: var(--radius-md);
-      border: 1px solid transparent;
-      font-size: var(--text-info-label-size); font-weight: var(--fw-semibold); line-height: 1.5;
-      white-space: nowrap; background: var(--bg);
-    }
-    .vf-offer-badge svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .vf-offer-badge--pending { border-color: #bfdbfe; color: #2563eb; }
-    .vf-offer-badge--information { border-color: #e2e8f0; color: #64748b; }
-    .vf-offer-badge--success { border-color: #6ee7b7; color: var(--success-600); }
-
-    /* ── Detail dock — Figma 4144:19379 + design-system typography ── */
-    .viewing-detail-dock {
-      display: flex; flex-direction: column;
-      width: 413px; flex-shrink: 0;
-      background: var(--bg);
-      border-radius: var(--radius-xl);
-      border: none;
-      overflow: hidden;
-      min-height: 0;
-      max-height: 100%;
-      height: 100%;
-      align-self: stretch;
-      box-shadow: 0 2px 14.1px rgba(0, 0, 0, 0.08);
-      padding: var(--space-6) var(--space-3);
-      box-sizing: border-box;
-      font-family: var(--font-sans);
-    }
-    .viewing-detail-dock .text-h2 { color: var(--fg); margin: 0; }
-    .viewing-detail-dock .text-h3 { margin: 0; }
-    .viewing-detail-dock .dock-form-label {
-      font-size: var(--text-body-size);
-      font-weight: var(--fw-semibold);
-      line-height: var(--lh-body);
-      color: var(--fg-muted);
-      display: block;
-    }
-    .viewing-detail-dock .dock-field-regular {
-      font-size: var(--text-body-size);
-      font-weight: var(--fw-regular);
-      line-height: var(--lh-body);
-      color: var(--fg);
-      display: block;
-    }
-    .viewing-detail-dock .dock-inline-label,
-    .viewing-detail-dock .dock-help-text {
-      font-size: var(--text-info-label-size);
-      font-weight: var(--fw-regular);
-      line-height: var(--lh-auto);
-      color: var(--fg);
-      margin: 0;
-    }
-    .viewing-detail-dock .dock-help-text { margin-top: var(--space-1); }
-    .viewing-detail-dock .dock-hero-schedule { color: var(--purple-500); margin: 0; }
-    .viewing-detail-dock.is-empty .dock-body {
-      padding: 0;
-    }
-
-    /* Dock header — Figma 4144:19382 */
-    .dock-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0;
-      flex-shrink: 0;
-      gap: var(--space-3);
-      background: transparent;
-      margin-bottom: var(--space-6);
-      min-height: 32px;
-    }
-    .dock-header-left {
-      display: flex; align-items: center; gap: 6px;
-      min-width: 0; flex: 1;
-    }
-    .dock-header-title { flex-shrink: 0; color: #334155; }
-    .dock-header-actions {
-      display: flex; align-items: center; gap: var(--space-3);
-      flex-shrink: 0;
-    }
-    .dock-activity-back {
-      flex-shrink: 0;
-      padding: 4px 8px;
-      font-size: 13px;
-      gap: 4px;
-    }
-    .dock-activity-back[hidden] { display: none !important; }
-    #dock-menu-wrap[hidden] { display: none !important; }
-    #dock-autosave-wrap[hidden] { display: none !important; }
-    .dock-menu-wrap { position: relative; }
-    .dock-menu-btn {
-      width: 32px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--bg); border: 1px solid #cbd5e1; border-radius: var(--radius-md);
-      cursor: pointer; color: var(--fg); flex-shrink: 0;
-      padding: 0;
-    }
-    .dock-menu-btn svg { width: 18px; height: 18px; }
-    .dock-menu-btn:hover { background: var(--slate-50); color: var(--fg); }
-    .dock-dropdown {
-      position: absolute; top: calc(100% + 4px); right: 0;
-      width: 220px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius-md); box-shadow: var(--shadow-md);
-      z-index: 100; padding: 4px;
-    }
-    .dock-dropdown[hidden] { display: none; }
-    .dock-dd-section { padding: 4px 8px 2px; }
-    .dock-dd-section[hidden] { display: none; }
-    .dock-dd-section-label {
-      font-size: var(--fs-xs); font-weight: 600; color: var(--fg-muted);
-      letter-spacing: 0.01em;
-    }
-    .dock-dd-item {
-      display: flex; align-items: center; gap: 8px;
-      width: 100%; padding: 8px 10px;
-      font-family: inherit; font-size: var(--fs-sm); color: var(--fg-strong);
-      background: none; border: none; border-radius: var(--radius-sm);
-      cursor: pointer; text-align: left;
-    }
-    .dock-dd-item[hidden] { display: none; }
-    .dock-dd-item:hover { background: var(--slate-50); }
-    .dock-dd-item svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--fg-muted); }
-    .dock-dd-sep { height: 1px; background: var(--border); margin: 4px 0; }
-    .dock-dd-sep[hidden] { display: none; }
-
-    /* Dock body */
-    .dock-body {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
-      display: flex; flex-direction: column; gap: var(--space-10);
-      padding: 0;
-      background: transparent;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    .dock-body::-webkit-scrollbar { display: none; }
-
-    #dock-footer {
-      flex-shrink: 0;
-    }
-
-    /* Dock empty state — Figma 4244:22028 */
-    .dock-empty {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 40px; width: 100%;
-    }
-    .dock-empty-illus {
-      position: relative; width: 249px; height: 230px; flex-shrink: 0;
-    }
-    .dock-ghost-card {
-      position: absolute; left: 0; width: 249px; height: 58px;
-      border-radius: 8px;
-      border: 1px solid rgba(194,212,227,0.5);
-      background: transparent;
-    }
-    .dock-ghost-card--top { top: 0; }
-    .dock-ghost-card--mid { top: 85px; background: #ebf1f6; }
-    .dock-ghost-card--bot { top: 171px; }
-    .dock-ghost-cursor {
-      position: absolute; top: 119px; left: 158px;
-      width: 48px; height: 48px; color: #94a3b8;
-    }
-    .dock-empty-text { text-align: center; width: 100%; }
-    .dock-empty-title { color: var(--fg-subtle); margin: 0 0 var(--space-2); }
-    .dock-empty-sub { color: var(--fg-muted); margin: 0; }
-
-    /* Dock hero — Figma horizontal profile row */
-    .dock-block-top {
-      display: flex; flex-direction: column; gap: var(--space-6);
-    }
-    .dock-hero { display: flex; flex-direction: column; gap: var(--space-3); }
-    .dock-hero-top {
-      display: flex; align-items: center; gap: var(--space-3);
-    }
-    .dock-hero-avatar {
-      width: 40px; height: 40px; flex-shrink: 0;
-      background: var(--slate-200); color: var(--fg);
-      font-size: var(--text-body-size);
-      font-weight: var(--fw-semibold);
-      line-height: var(--lh-auto);
-    }
-    .dock-hero-meta { flex: 1; min-width: 0; }
-    .dock-hero-name-row {
-      display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
-    }
-    .dock-hero-name-row .vf-badge { flex-shrink: 0; }
-    .dock-hero-name-stack { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
-    .dock-hero-logistics {
-      display: flex; flex-direction: column; gap: var(--space-4);
-      width: 100%;
-    }
-    .dock-hero-detail-row {
-      display: flex; align-items: center; justify-content: space-between; gap: var(--space-1);
-      font-size: var(--text-body-size);
-      font-weight: var(--fw-regular);
-      line-height: var(--lh-body);
-      color: var(--fg-strong);
-    }
-    .dock-hero-detail-row > span:first-child { color: var(--fg-muted); }
-    .dock-hero-agent-val {
-      display: inline-flex; align-items: center; gap: var(--space-1);
-      font-size: var(--text-body-size); line-height: var(--lh-body); color: var(--fg-strong);
-    }
-    .dock-hero-agent-avatar {
-      width: 28px; height: 28px; flex-shrink: 0;
-      font-size: var(--text-info-label-size);
-    }
-    .dock-agent-notes-label {
-      font-size: var(--text-info-label-size);
-      font-weight: var(--fw-regular);
-      line-height: normal;
-      color: #334155;
-    }
-
-    /* Dock sections */
-    .dock-section { display: flex; flex-direction: column; gap: var(--space-3); }
-    .dock-section-heading {
-      display: flex; align-items: center; gap: var(--space-3); width: 100%;
-    }
-    .dock-section-heading h3 { white-space: nowrap; }
-    .dock-section-heading-line {
-      flex: 1; height: 1px; background: var(--slate-300); min-width: 0;
-    }
-    .dock-section-block { display: flex; flex-direction: column; gap: var(--space-6); }
-    .dock-section .textarea { min-height: 108px; }
-
-    /* Activity log */
-    .dock-section--activity { gap: var(--space-6); }
-    .activity-list { display: flex; flex-direction: column; gap: 0; }
-    .activity-list--full { padding-top: 0; }
-    .activity-entry {
-      display: flex; align-items: flex-start; gap: var(--space-2);
-      padding: 0;
-    }
-    .activity-avatars {
-      display: flex; flex-shrink: 0; margin-right: 2px;
-    }
-    .activity-avatars .avatar {
-      width: 24px; height: 24px;
-      font-size: var(--text-h5-size);
-      font-weight: var(--fw-semibold);
-      line-height: var(--lh-auto);
-      background: var(--slate-200); color: var(--fg);
-    }
-    .activity-avatars .avatar:not(:first-child) { margin-left: -6px; }
-    .activity-text { flex: 1; color: var(--fg-strong); min-width: 0; }
-    .activity-time { color: var(--fg-strong); white-space: nowrap; flex-shrink: 0; }
-    .activity-view-all-wrap { width: 100%; }
-    .activity-view-all {
-      display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
-      width: 100%; min-height: 36px; padding: var(--space-2) var(--space-4);
-      font-size: var(--text-button-size);
-      font-weight: var(--fw-medium);
-      line-height: var(--lh-ui);
-      color: var(--fg);
-      background: transparent; border: none; border-radius: var(--radius-md);
-      cursor: pointer; font-family: inherit;
-    }
-    .activity-view-all:hover { background: var(--slate-50); }
-
-    .dock-confirmation-copy {
-      font-size: 11px; color: var(--fg-muted); line-height: 1.55;
-      margin: 8px 0 0; text-align: center;
-    }
-    .dock-confirmation-auto {
-      margin: 0; text-align: left;
-    }
-    .reminder-row {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-4);
-      border-top: 1px solid var(--border);
-      background: var(--bg);
-      flex-shrink: 0;
-    }
-    .reminder-info { flex: 1; }
-    .reminder-label { font-size: 13px; font-weight: 600; color: var(--fg-strong); }
-    .reminder-sub { font-size: 11px; color: var(--fg-muted); margin-top: 2px; }
-    .toggle-wrap { flex-shrink: 0; margin-top: 2px; }
-    .toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
-    .toggle-track {
-      display: flex; align-items: center;
-      width: 36px; height: 20px;
-      background: var(--slate-200); border-radius: var(--radius-full);
-      cursor: pointer; transition: background var(--dur-fast);
-      position: relative;
-    }
-    .toggle-input:checked + .toggle-track { background: var(--purple-600); }
-    .toggle-thumb {
-      position: absolute; left: 2px;
-      width: 16px; height: 16px;
-      background: #fff; border-radius: var(--radius-full);
-      box-shadow: 0 1px 3px rgba(0,0,0,.2);
-      transition: left var(--dur-fast);
-    }
-    .toggle-input:checked + .toggle-track .toggle-thumb { left: 18px; }
-
-    /* Dock footer (CTA) */
-    .dock-footer {
-      padding: 16px 0 0;
-      margin-top: 16px;
-      border-top: 1px solid var(--border);
-      display: flex; flex-direction: column; gap: var(--space-2);
-      flex-shrink: 0; background: transparent;
-    }
-    .dock-cta {
-      width: 100%;
-      display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
-    }
-    .dock-footer-note { font-size: 11px; color: var(--fg-muted); text-align: center; }
-    .dock-field-optional { font-weight: 400; color: var(--fg-muted); }
-
-    /* Assessment section */
-    .assessment-section { display: flex; flex-direction: column; gap: var(--space-6); }
-    .assessment-header {
-      display: flex; align-items: center; gap: var(--space-3); width: 100%;
-    }
-    .assessment-title { white-space: nowrap; }
-    .assessment-heading-line { flex: 1; height: 1px; background: var(--slate-300); min-width: 0; }
-    .assessment-fields { display: flex; flex-direction: column; gap: var(--space-6); }
-    .assessment-field { display: flex; flex-direction: column; gap: var(--space-1); }
-    .assessment-field--select { gap: var(--space-2); }
-    .assessment-fields .textarea { min-height: 108px; }
-    .viewing-detail-dock .input,
-    .viewing-detail-dock .textarea { border-color: #cbd5e1; }
-    .viewing-detail-dock .currency-prefix { border-color: #cbd5e1; }
-    .price-toggle-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0;
-    }
-    .price-toggle-label {
-      display: flex; align-items: center; gap: 0;
-      margin: 0;
-    }
-    .price-toggle-label .asterisk { color: var(--danger-600); }
-    .currency-input-wrap {
-      display: flex; align-items: stretch;
-    }
-    .currency-prefix {
-      display: flex; align-items: center; padding: 0 12px;
-      background: var(--bg-subtle); border: 1px solid var(--border);
-      border-right: none; border-radius: var(--radius-md) 0 0 var(--radius-md);
-      font-size: var(--fs-sm); color: var(--fg-muted); font-weight: 500;
-    }
-    .currency-input-wrap .input {
-      border-top-left-radius: 0; border-bottom-left-radius: 0;
-    }
-    .dock-proposed-price[hidden] { display: none; }
-
-    /* ── Modals ── */
-    .modal-breadcrumb { font-size: 11px; color: var(--fg-muted); margin-bottom: 4px; }
-    .modal-form-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);
-    }
-    .modal-form-row .field { margin-bottom: 0; }
-    .input-with-icon { position: relative; }
-    .input-with-icon .input { padding-right: 34px; }
-    .input-icon-right {
-      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-      color: var(--fg-muted); pointer-events: none;
-    }
-    .input-icon-right.clickable { pointer-events: auto; cursor: pointer; }
-    .phone-row { display: flex; gap: var(--space-2); }
-    .phone-prefix {
-      display: flex; align-items: center; gap: 5px;
-      padding: 0 10px;
-      border: 1px solid var(--border); border-radius: var(--radius-md);
-      font-size: 13px; color: var(--fg);
-      background: var(--bg); cursor: pointer; white-space: nowrap;
-      height: 36px;
-    }
-    .phone-number-input { flex: 1; }
-    .modal-btn-full {
-      width: 100%;
-      display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
-      margin-top: var(--space-2);
-    }
-    .collapsible-header {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; background: none; border: none;
-      cursor: pointer; font-family: inherit;
-      font-size: 15px; font-weight: 600; color: var(--fg-strong);
-      padding: var(--space-3) 0; text-align: left;
-      border-top: 1px solid var(--border); margin-top: var(--space-1);
-    }
-    .collapsible-body[hidden] { display: none; }
-    .nl-additional-wrap { display: flex; flex-direction: column; gap: 24px; width: 100%; margin-top: 8px; }
-    .nl-additional-head {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
-    }
-    .nl-additional-title { font-size: 18px; font-weight: 600; color: #000; margin: 0; line-height: 1; }
-    .nl-collapse-btn {
-      width: 32px; height: 32px; flex-shrink: 0;
-      display: inline-flex; align-items: center; justify-content: center;
-      background: #fff; border: 1px solid #cbd5e1; border-radius: 8px;
-      cursor: pointer; color: #334155; padding: 0;
-    }
-    .nl-collapse-btn svg { transition: transform .2s; }
-    .nl-collapse-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
-    .nl-additional-body { display: flex; flex-direction: column; gap: 12px; }
-    .nl-additional-body[hidden] { display: none; }
-    .nl-section-title {
-      font-size: 14px; font-weight: 600; color: #334155; margin: 4px 0 0;
-    }
-    .modal-footer-row {
-      display: flex; gap: var(--space-3); margin-top: var(--space-3);
-    }
-    .modal-footer-row .btn { flex: 1; }
+    .master-table tbody tr.is-clickable-viewing:hover td { background: var(--slate-50); }
 
     /* Breadcrumb */
     .breadcrumb { display: flex; align-items: center; gap: 4px; }
@@ -739,20 +439,217 @@
     .breadcrumb-item.is-current { color: var(--fg-strong); font-weight: 500; }
     .breadcrumb-sep { width: 14px; height: 14px; color: var(--fg-subtle); flex-shrink: 0; }
 
-    /* Toast visibility — design-system/homeywebfoundation.css */
-    .toast-region .toast { display: none; }
-    .toast-region .toast.is-visible { display: flex; }
-
-    .rating-picker { display: flex; gap: 4px; flex-wrap: wrap; }
-    .rating-btn {
-      min-width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-xs);
-      background: var(--bg); cursor: pointer; font-family: inherit; font-size: var(--fs-sm);
-      font-weight: 600; color: var(--fg-muted);
+    /* ── Morning board ── */
+    .morning-board { display: flex; flex-direction: column; gap: var(--space-5); min-height: 100%; }
+    .morning-top {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap;
+      padding: var(--space-5); background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
     }
-    .rating-btn:hover { background: var(--slate-50); }
-    .rating-btn.is-selected { background: var(--purple-50); border-color: var(--purple-400); color: var(--purple-700); }
-    .rebook-meta { font-size: var(--fs-sm); font-weight: 600; color: var(--fg-strong); }
-    .rebook-warn { font-size: var(--fs-xs); color: var(--fg-muted); margin-top: var(--space-2); }
+    .morning-greet h1 { font-size: var(--fs-xl); font-weight: 700; color: var(--fg-strong); margin-bottom: 4px; }
+    .morning-greet p { font-size: var(--fs-sm); color: var(--fg-muted); }
+    .morning-stats { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+    .morning-stat {
+      padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+      background: var(--bg-subtle); border: 1px solid var(--border); min-width: 120px;
+    }
+    .morning-stat.is-alert { border-color: var(--danger-200); background: var(--danger-50); }
+    .morning-stat.is-today { border-color: var(--purple-300); background: var(--purple-50); }
+    .morning-stat-label { font-size: var(--fs-xs); color: var(--fg-muted); }
+    .morning-stat strong { display: block; font-size: var(--fs-lg); font-weight: 700; color: var(--fg-strong); margin-top: 2px; }
+
+    .today-panel {
+      background: linear-gradient(180deg, var(--purple-50) 0%, var(--bg) 100%);
+      border: 2px solid var(--purple-300); border-radius: var(--radius-lg);
+      padding: var(--space-5); box-shadow: var(--shadow-sm);
+    }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; }
+    .panel-head h2 { font-size: var(--fs-md); font-weight: 700; color: var(--fg-strong); }
+    .panel-head span { font-size: var(--fs-xs); color: var(--fg-muted); }
+    .today-timeline { display: flex; flex-direction: column; gap: var(--space-2); }
+    .today-slot {
+      display: grid; grid-template-columns: 72px 1fr auto; gap: var(--space-4); align-items: center;
+      padding: var(--space-3) var(--space-4); background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      cursor: pointer; transition: background var(--dur-fast), border-color var(--dur-fast);
+    }
+    .today-slot:hover { background: var(--slate-50); border-color: var(--purple-300); }
+    .today-slot.is-now { border-color: var(--purple-500); box-shadow: 0 0 0 3px var(--purple-100); }
+    .today-slot.is-done { opacity: 0.72; }
+    .today-slot-time { font-size: var(--fs-sm); font-weight: 700; color: var(--purple-700); }
+    .today-slot-main strong { display: block; font-size: var(--fs-sm); color: var(--fg-strong); }
+    .today-slot-main span { font-size: var(--fs-xs); color: var(--fg-muted); }
+    .today-slot-action { font-size: var(--fs-xs); font-weight: 600; color: var(--purple-700); white-space: nowrap; }
+    .today-slot-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+    .cases-panel { display: flex; flex-direction: column; gap: var(--space-4); }
+    .cases-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+    .cases-toolbar h2 { font-size: var(--fs-md); font-weight: 700; color: var(--fg-strong); }
+    .cases-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+    .cases-filter {
+      padding: 6px 12px; border-radius: var(--radius-full); border: 1px solid var(--border);
+      background: var(--bg); font-size: var(--fs-xs); font-weight: 600; color: var(--fg-muted);
+      cursor: pointer; font-family: inherit;
+    }
+    .cases-filter.is-active { border-color: var(--purple-400); background: var(--purple-50); color: var(--purple-700); }
+    .case-list { display: flex; flex-direction: column; gap: var(--space-3); }
+    .case-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: var(--space-4); box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: var(--space-4);
+    }
+    .case-card.is-blocked { border-left: 4px solid var(--danger-500); }
+    .case-card.is-today { border-left: 4px solid var(--purple-500); }
+    .case-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+    .case-card-ref { font-size: var(--fs-xs); font-weight: 700; color: var(--purple-700); }
+    .case-card-title { font-size: var(--fs-sm); font-weight: 600; color: var(--fg-strong); margin-top: 2px; }
+    .case-card-vendor { font-size: var(--fs-xs); color: var(--fg-muted); margin-top: 2px; }
+    .case-stage-pill {
+      display: inline-flex; padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--slate-100); font-size: var(--fs-xs); font-weight: 600; color: var(--fg-strong);
+    }
+    .journey-rail {
+      display: flex; align-items: center; gap: 0; overflow-x: auto; padding-bottom: 2px;
+    }
+    .journey-step {
+      display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 64px; flex-shrink: 0;
+      font-size: 10px; font-weight: 600; color: var(--fg-muted); text-align: center;
+    }
+    .journey-dot {
+      width: 10px; height: 10px; border-radius: var(--radius-full);
+      background: var(--slate-200); border: 2px solid var(--slate-300);
+    }
+    .journey-step.is-done .journey-dot { background: var(--success-600); border-color: var(--success-600); }
+    .journey-step.is-active .journey-dot { background: var(--purple-600); border-color: var(--purple-600); box-shadow: 0 0 0 3px var(--purple-100); }
+    .journey-step.is-active { color: var(--purple-700); }
+    .journey-step.is-blocked .journey-dot { background: var(--danger-500); border-color: var(--danger-500); }
+    .journey-step.is-blocked { color: var(--danger-700); }
+    .journey-connector { width: 20px; height: 2px; background: var(--slate-200); flex-shrink: 0; margin-bottom: 14px; }
+    .journey-connector.is-done { background: var(--success-400); }
+    .case-next {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+      padding: var(--space-3); border-radius: var(--radius-md);
+      background: var(--purple-50); border: 1px solid var(--purple-200);
+      cursor: pointer; transition: background var(--dur-fast);
+    }
+    .case-next:hover { background: var(--purple-100); }
+    .case-next-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--purple-700); }
+    .case-next-text { font-size: var(--fs-sm); font-weight: 600; color: var(--fg-strong); margin-top: 2px; }
+    .case-next-detail { font-size: var(--fs-xs); color: var(--fg-muted); margin-top: 2px; }
+    .case-blockers { display: flex; flex-wrap: wrap; gap: 6px; }
+    .blocker-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      background: var(--danger-50); border: 1px solid var(--danger-200);
+      font-size: var(--fs-xs); font-weight: 600; color: var(--danger-700);
+      cursor: pointer;
+    }
+    .blocker-chip:hover { background: #fee2e2; }
+    .case-meta-row { display: flex; gap: var(--space-4); flex-wrap: wrap; font-size: var(--fs-xs); color: var(--fg-muted); }
+    .case-meta-row strong { color: var(--fg-strong); }
+
+    /* ── Split view: table + context rail ── */
+    .split-layout {
+      display: flex; gap: var(--space-4); height: 100%; min-height: 0; align-items: stretch;
+    }
+    .split-main {
+      flex: 1 1 75%; min-width: 0; display: flex; flex-direction: column;
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .split-main-head {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+      padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .split-main-head h2 { font-size: var(--fs-md); font-weight: 700; color: var(--fg-strong); }
+    .split-main-body { flex: 1; min-height: 0; overflow: auto; }
+    .split-rail {
+      flex: 0 0 25%; width: 25%; max-width: 340px; min-width: 260px;
+      display: flex; flex-direction: column; gap: var(--space-3);
+      overflow-y: auto; min-height: 0; padding-bottom: var(--space-2);
+    }
+    .ctx-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: var(--space-4); box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: var(--space-3);
+    }
+    .ctx-card.is-accent { border-color: var(--purple-300); background: linear-gradient(180deg, var(--purple-50), var(--bg)); }
+    .ctx-card.is-alert { border-color: var(--danger-200); background: var(--danger-50); }
+    .ctx-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+    .ctx-card-title { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-muted); }
+    .ctx-card h3 { font-size: var(--fs-sm); font-weight: 700; color: var(--fg-strong); margin: 0; }
+    .ctx-card p { font-size: var(--fs-xs); color: var(--fg-muted); margin: 0; line-height: 1.45; }
+    .ctx-card-action {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+      padding: var(--space-3); border-radius: var(--radius-md);
+      background: var(--slate-50); border: 1px solid var(--slate-200);
+      font-size: var(--fs-xs); cursor: pointer; text-align: left; width: 100%;
+      font-family: inherit; color: inherit;
+    }
+    .ctx-card-action:hover { background: var(--purple-50); border-color: var(--purple-200); }
+    .ctx-card-action strong { display: block; color: var(--fg-strong); font-size: var(--fs-sm); margin-bottom: 2px; }
+    .ctx-card-action span { color: var(--fg-muted); }
+    .ctx-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+    .ctx-stat {
+      padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+      background: var(--bg-subtle); border: 1px solid var(--border);
+    }
+    .ctx-stat label { font-size: 10px; color: var(--fg-muted); display: block; }
+    .ctx-stat strong { font-size: var(--fs-sm); color: var(--fg-strong); }
+    .ctx-list { display: flex; flex-direction: column; gap: 6px; }
+    .ctx-list-item {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2);
+      padding: 8px 10px; border-radius: var(--radius-md); background: var(--bg-subtle);
+      font-size: var(--fs-xs);
+    }
+    .ctx-list-item strong { color: var(--fg-strong); display: block; }
+    .ctx-list-item span { color: var(--fg-muted); }
+    .ctx-mini-rail { display: flex; flex-wrap: wrap; gap: 4px; }
+    .ctx-mini-step {
+      padding: 2px 8px; border-radius: var(--radius-full); font-size: 10px; font-weight: 600;
+      background: var(--slate-100); color: var(--fg-muted);
+    }
+    .ctx-mini-step.is-done { background: var(--success-50); color: var(--success-600); }
+    .ctx-mini-step.is-active { background: var(--purple-100); color: var(--purple-700); }
+    .ctx-mini-step.is-blocked { background: var(--danger-50); color: var(--danger-700); }
+    .case-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+    .case-table th {
+      text-align: left; font-weight: 600; font-size: var(--fs-xs);
+      padding: 10px 14px; background: var(--bg-subtle); color: var(--fg-strong);
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+      position: sticky; top: 0; z-index: 1;
+    }
+    .case-table td {
+      padding: 12px 14px; border-bottom: 1px solid var(--slate-100);
+      vertical-align: middle; color: var(--fg);
+    }
+    .case-table tbody tr { cursor: pointer; transition: background var(--dur-fast); }
+    .case-table tbody tr:hover td { background: var(--slate-50); }
+    .case-table tbody tr.is-selected td { background: var(--purple-50); }
+    .case-table tbody tr.is-today td:first-child { box-shadow: inset 3px 0 0 var(--purple-500); }
+    .case-table tbody tr.is-blocked td:first-child { box-shadow: inset 3px 0 0 var(--danger-500); }
+    .case-table-ref { font-weight: 700; color: var(--purple-700); font-size: var(--fs-xs); }
+    .case-table-addr { font-size: var(--fs-xs); color: var(--fg-muted); margin-top: 2px; }
+    .case-table-next { font-size: var(--fs-xs); font-weight: 600; color: var(--fg-strong); max-width: 200px; }
+    .blocker-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--radius-full);
+      background: var(--danger-100); color: var(--danger-700); font-size: var(--fs-xs); font-weight: 700;
+    }
+    .blocker-count.is-clear { background: var(--slate-100); color: var(--fg-muted); font-weight: 500; }
+    .today-dot {
+      display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs); font-weight: 600;
+      color: var(--purple-700);
+    }
+    .today-dot::before {
+      content: ''; width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--purple-500);
+    }
+    @media (max-width: 1100px) {
+      .split-layout { flex-direction: column; overflow-y: auto; }
+      .split-main { flex: none; max-height: 55vh; }
+      .split-rail { flex: none; width: 100%; max-width: none; }
+    }
 
   </style>
 </head>
@@ -766,7 +663,7 @@
     <div class="rail-item" title="Cases">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7l7-4 7 4v10l-7 4-7-4V7Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
     </div>
-    <div class="rail-item is-active" title="Viewings">
+    <div class="rail-item is-active" title="Dashboard">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="13" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M3 8h14M7 2v3M13 2v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
     </div>
     <div class="rail-item" title="Contacts">
@@ -781,7 +678,7 @@
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a class="breadcrumb-item" href="#">Dashboard</a>
       <svg class="breadcrumb-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-      <span class="breadcrumb-item is-current">Viewings</span>
+      <span class="breadcrumb-item is-current">Morning dashboard</span>
     </nav>
     <div class="header-right">
       <div class="btn-group btn-group-segmented" role="tablist" aria-label="Who is viewing" id="persona-tabs">
@@ -800,112 +697,27 @@
     </div>
     <div class="iteration-switcher">
       <div class="tabs-segmented" role="tablist" id="iteration-tabs">
-        <button type="button" class="tab-segmented is-active" data-iteration="1" role="tab">1. Day map</button>
-        <button type="button" class="tab-segmented" data-iteration="2" role="tab">2. Property lens</button>
-        <button type="button" class="tab-segmented" data-iteration="3" role="tab">3. Exception lens</button>
+        <button type="button" class="tab-segmented is-active" data-iteration="1" role="tab">1. Morning board</button>
+        <button type="button" class="tab-segmented" data-iteration="2" role="tab">2. All viewings list</button>
+        <button type="button" class="tab-segmented" data-iteration="3" role="tab">3. Table + context</button>
       </div>
     </div>
   </div>
 
   <div class="dashboard-body" id="dashboard-body">
     <div class="dashboard-canvas" id="dashboard-canvas">
-      <section class="iteration-panel is-active" id="iteration-1" aria-label="Day map">
+      <section class="iteration-panel is-active" id="iteration-1" aria-label="Morning board">
         <div class="iter-mount" id="mount-1"></div>
       </section>
-      <section class="iteration-panel" id="iteration-2" aria-label="Property lens">
+      <section class="iteration-panel" id="iteration-2" aria-label="All viewings list">
         <div class="iter-mount" id="mount-2"></div>
       </section>
-      <section class="iteration-panel" id="iteration-3" aria-label="Exception lens">
+      <section class="iteration-panel" id="iteration-3" aria-label="Table and context rail">
         <div class="iter-mount" id="mount-3"></div>
       </section>
     </div>
-    <aside class="viewing-detail-dock is-empty" id="viewing-detail-dock" aria-label="Viewing details">
-    <div class="dock-header" id="dock-header" hidden>
-      <div class="dock-header-left">
-        <button type="button" class="btn btn-tertiary dock-activity-back" id="dock-activity-back" hidden>
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Back
-        </button>
-        <span class="text-h2 dock-header-title" id="dock-header-title">Viewing Details</span>
-      </div>
-      <div class="dock-header-actions">
-        <div id="dock-autosave-wrap" hidden>
-          <div class="autosave-status" id="dock-autosave" role="status" aria-live="polite" hidden>
-            <span class="autosave-status-icon" aria-hidden="true"></span>
-            <span class="autosave-status-text"></span>
-          </div>
-        </div>
-        <div class="dock-menu-wrap" id="dock-menu-wrap">
-        <button type="button" class="dock-menu-btn" id="dock-menu-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="3.5" r="1.2" fill="currentColor"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="8" cy="12.5" r="1.2" fill="currentColor"/></svg>
-        </button>
-        <div class="dock-dropdown" id="dock-dropdown" hidden role="menu">
-          <div class="dock-dd-section dock-dd-section--status" id="dock-dd-status-section">
-            <span class="dock-dd-section-label">Update Status</span>
-          </div>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="mark-confirmed">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.67" width="12" height="10.67" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M2 5.33h12M5.33 1.33v2M10.67 1.33v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M5.5 8.5l2 2 3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Mark as Confirmed
-          </button>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="mark-completed">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5.33V8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="10.67" r=".5" fill="currentColor"/></svg>
-            Mark as Completed
-          </button>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="mark-noshow">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5.33V8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="10.67" r=".5" fill="currentColor"/></svg>
-            Mark as No Show
-          </button>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="cancel-viewing">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="6" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 13c0-2.2 1.6-3.5 3.5-3.5s3.5 1.3 3.5 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="11.5" y1="4" x2="13.5" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="13.5" y1="4" x2="11.5" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Cancel Viewing
-          </button>
-          <div class="dock-dd-sep" id="dock-dd-sep"></div>
-          <div class="dock-dd-section dock-dd-section--edit" id="dock-dd-edit-section">
-            <span class="dock-dd-section-label">Edit Viewing</span>
-          </div>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="reschedule">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 4.67V8l2.67 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Reschedule
-          </button>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="schedule-new">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.67" width="12" height="10.67" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M2 5.33h12M5.33 1.33v2M10.67 1.33v2M8 8v3.33M6.67 9.33H9.33" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Schedule New Viewing
-          </button>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="edit-applicant">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 13.33h5.33M2 13.33l2.93-1.27c.22-.1.42-.24.6-.42l5.8-6.1a1.67 1.67 0 0 0 0-2.3 1.58 1.58 0 0 0-2.26 0l-5.8 6.1c-.12.13-.22.27-.3.43L2 13.33Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Edit Applicant
-          </button>
-          <button type="button" class="dock-dd-item" role="menuitem" data-action="delete-viewing">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4h12M5 4V2.67a.67.67 0 0 1 .67-.67h4.66a.67.67 0 0 1 .67.67V4M12.67 4l-.87 8.67a1.33 1.33 0 0 1-1.33 1.33H5.53a1.33 1.33 0 0 1-1.33-1.33L3.33 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Delete Viewing
-          </button>
-        </div>
-        </div>
-      </div>
-    </div>
-    <!-- Dynamic body -->
-    <div class="dock-body" id="dock-body"></div>
-    <!-- Dynamic footer -->
-    <div id="dock-footer"></div>
-    </aside>
   </div>
 </div>
-
-<!-- Toast — design-system token.toast -->
-<div class="toast-region" aria-live="polite" aria-atomic="true">
-  <div class="toast toast-positive" id="toast" role="status">
-    <span class="toast-icon" id="toast-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-    </span>
-    <div class="toast-body">
-      <div class="toast-title" id="toast-title"></div>
-      <div class="toast-msg" id="toast-msg"></div>
-    </div>
-    <button type="button" class="toast-close" id="toast-close" aria-label="Dismiss">×</button>
-  </div>
-</div>
-
-
 
 <script>
 (function () {
@@ -917,19 +729,88 @@
   const CURRENT_USER = 'John Doe';
   const AGENTS = ['John Doe', 'Sarah Malik', 'Michael Torres'];
   const HOURS = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+  const CASE_WORKFLOW_URL = 'agent-view-v5.html';
   let persona = 'agent';
   let activeIteration = 1;
-  let selectedId = null;
-  let dockActivityFullView = false;
+  let morningFilter = 'all';
+  let masterTab = 'today';
+  let masterSearch = '';
+  let masterSearchField = 'applicant';
+  let splitSelectedId = null;
+  let splitFilter = 'all';
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
   const PROPERTIES = {
-    'pu-0001': { ref: 'PU-0001', address: '12 Duarte Close', area: 'Harrow HA1 4GW', price: 400000, vendor: 'Mr Hussain Somani', vendorUpdateDays: 1 },
-    'pu-0002': { ref: 'PU-0002', address: '8 Maple Court', area: 'Wimbledon SW19 3PQ', price: 525000, vendor: 'Mrs Anita Desai', vendorUpdateDays: 5 },
-    'pu-0003': { ref: 'PU-0003', address: '42 Riverside Walk', area: 'Reading RG1 8DN', price: 310000, vendor: 'Mr James Okonkwo', vendorUpdateDays: 2 },
-    'pu-0004': { ref: 'PU-0004', address: '15 Church Lane', area: 'Bromley BR1 2AB', price: 650000, vendor: 'Ms Helen Wright', vendorUpdateDays: 4 },
-    'pu-0005': { ref: 'PU-0005', address: '3 Victoria Terrace', area: 'Leeds LS6 1DR', price: 285000, vendor: 'Mr David Chen', vendorUpdateDays: 6 },
-    'pu-0006': { ref: 'PU-0006', address: '27 Oakfield Road', area: 'Bristol BS6 5EL', price: 445000, vendor: 'Mrs Sarah Bennett', vendorUpdateDays: 3 },
+    'pu-0001': { ref: 'PU-0001', address: '12 Duarte Close', area: 'Harrow HA1 4GW', price: 400000, vendor: 'Mr Hussain Somani', vendorUpdateDays: 5 },
+    'pu-0002': { ref: 'PU-0002', address: '8 Maple Court', area: 'Wimbledon SW19 3PQ', price: 525000, vendor: 'Mrs Anita Desai', vendorUpdateDays: 2 },
+    'pu-0003': { ref: 'PU-0003', address: '42 Riverside Walk', area: 'Reading RG1 8DN', price: 310000, vendor: 'Mr James Okonkwo', vendorUpdateDays: 1 },
+    'pu-0004': { ref: 'PU-0004', address: '15 Church Lane', area: 'Bromley BR1 2AB', price: 650000, vendor: 'Ms Helen Wright', vendorUpdateDays: 3 },
+    'pu-0005': { ref: 'PU-0005', address: '3 Victoria Terrace', area: 'Leeds LS6 1DR', price: 285000, vendor: 'Mr David Chen', vendorUpdateDays: 8 },
+    'pu-0006': { ref: 'PU-0006', address: '27 Oakfield Road', area: 'Bristol BS6 5EL', price: 445000, vendor: 'Mrs Sarah Bennett', vendorUpdateDays: 2 },
+  };
+
+  const WORKFLOW_STEPS = [
+    { id: 'brochure', label: 'Brochure' },
+    { id: 'generation', label: 'Listing' },
+    { id: 'contract', label: 'Contract' },
+    { id: 'enquiry', label: 'Enquiry' },
+    { id: 'viewings', label: 'Viewings' },
+    { id: 'offer', label: 'Offer' },
+    { id: 'selection', label: 'Selection' },
+    { id: 'mos', label: 'MOS' },
+  ];
+
+  const CASES = {
+    'pu-0001': {
+      leadAgent: 'John Doe',
+      stage: 'Viewings & feedback',
+      steps: { brochure: 'done', generation: 'done', contract: 'done', enquiry: 'done', viewings: 'active', offer: 'pending', selection: 'pending', mos: 'pending' },
+      nextStep: { workflow: 'viewings', label: 'Send vendor update', detail: '5 days since last update · 2 interested applicants', viewingId: 'v1' },
+      blockers: [
+        { label: 'Rebook no show', detail: 'Derik Alrhtia', workflow: 'viewings', viewingId: 'v4' },
+      ],
+    },
+    'pu-0002': {
+      leadAgent: 'Sarah Malik',
+      stage: 'Viewings & feedback',
+      steps: { brochure: 'done', generation: 'done', contract: 'done', enquiry: 'done', viewings: 'active', offer: 'pending', selection: 'pending', mos: 'pending' },
+      nextStep: { workflow: 'viewings', label: 'Chase viewing confirmation', detail: 'Emma Walsh — today 10:00, not confirmed', viewingId: 'v5' },
+      blockers: [
+        { label: 'Unconfirmed today', detail: 'Emma Walsh at 10:00', workflow: 'viewings', viewingId: 'v5' },
+        { label: 'Missing feedback', detail: 'Grace Holloway — completed Tue', workflow: 'viewings', viewingId: 'v16' },
+      ],
+    },
+    'pu-0003': {
+      leadAgent: 'Michael Torres',
+      stage: 'Viewings & feedback',
+      steps: { brochure: 'done', generation: 'done', contract: 'done', enquiry: 'done', viewings: 'active', offer: 'pending', selection: 'pending', mos: 'pending' },
+      nextStep: { workflow: 'viewings', label: 'Reschedule viewing', detail: 'Oliver Chen requested a new time', viewingId: 'v7' },
+      blockers: [{ label: 'Reschedule requested', detail: 'Oliver Chen — today 11:00', workflow: 'viewings', viewingId: 'v7' }],
+    },
+    'pu-0004': {
+      leadAgent: 'John Doe',
+      stage: 'Offer stage',
+      steps: { brochure: 'done', generation: 'done', contract: 'done', enquiry: 'done', viewings: 'done', offer: 'active', selection: 'blocked', mos: 'pending' },
+      nextStep: { workflow: 'offer', label: 'Present offer to vendor', detail: 'Amy Foster — £300,000 (below asking)', viewingId: 'v10' },
+      blockers: [
+        { label: 'Select preferred offer', detail: '2 offers on table — vendor decision needed', workflow: 'selection' },
+        { label: 'Missing feedback', detail: 'Tom Bradley — completed 27 May', workflow: 'viewings', viewingId: 'v9' },
+      ],
+    },
+    'pu-0005': {
+      leadAgent: 'Sarah Malik',
+      stage: 'Going live',
+      steps: { brochure: 'done', generation: 'blocked', contract: 'done', enquiry: 'pending', viewings: 'pending', offer: 'pending', selection: 'pending', mos: 'pending' },
+      nextStep: { workflow: 'generation', label: 'Publish listing', detail: 'Brochure approved — push to Rightmove & TW site' },
+      blockers: [{ label: 'Listing not live', detail: 'Awaiting portal publish after brochure sign-off', workflow: 'generation' }],
+    },
+    'pu-0006': {
+      leadAgent: 'John Doe',
+      stage: 'Memorandum of sale',
+      steps: { brochure: 'done', generation: 'done', contract: 'done', enquiry: 'done', viewings: 'done', offer: 'done', selection: 'done', mos: 'active' },
+      nextStep: { workflow: 'mos', label: 'Generate memorandum of sale', detail: 'Hannah Lee selected — £420,000' },
+      blockers: [{ label: 'Solicitor details missing', detail: 'Buyer solicitor not on file', workflow: 'mos' }],
+    },
   };
 
   const viewingBase = (o) => ({
@@ -949,7 +830,7 @@
     viewingBase({ id: 'v4', propertyId: 'pu-0001', viewer: 'Derik Alrhtia', date: '2026-05-29', time: '12:30', status: 'no_show', agent: 'John Doe', rebook: 1 }),
     viewingBase({ id: 'v5', propertyId: 'pu-0002', viewer: 'Emma Walsh', date: '2026-05-29', time: '10:00', status: 'scheduled', agent: 'Sarah Malik', duration: 45 }),
     viewingBase({ id: 'v6', propertyId: 'pu-0002', viewer: 'Nina Patel', date: '2026-05-29', time: '14:00', status: 'confirmed', agent: 'Michael Torres' }),
-    viewingBase({ id: 'v7', propertyId: 'pu-0003', viewer: 'Oliver Chen', date: '2026-05-29', time: '11:00', status: 'scheduled', agent: 'Michael Torres' }),
+    viewingBase({ id: 'v7', propertyId: 'pu-0003', viewer: 'Oliver Chen', date: '2026-05-29', time: '11:00', status: 'scheduled', agent: 'Michael Torres', rescheduleRequested: true }),
     viewingBase({ id: 'v8', propertyId: 'pu-0003', viewer: 'Priya Sharma', date: '2026-05-30', time: '15:30', status: 'scheduled', agent: 'John Doe' }),
     viewingBase({ id: 'v9', propertyId: 'pu-0004', viewer: 'Tom Bradley', date: '2026-05-27', time: '14:00', status: 'completed', agent: 'Sarah Malik', offerPrice: 295000, priceProposed: true, proposedPrice: 295000 }),
     viewingBase({ id: 'v10', propertyId: 'pu-0004', viewer: 'Amy Foster', date: '2026-05-28', time: '13:00', status: 'completed', agent: 'John Doe', summary: 'Interested in location but noted bathroom repairs.', offerPrice: 300000 }),
@@ -958,11 +839,24 @@
     viewingBase({ id: 'v13', propertyId: 'pu-0005', viewer: 'Chris Morgan', date: '2026-06-01', time: '11:30', status: 'scheduled', agent: 'Michael Torres' }),
     viewingBase({ id: 'v14', propertyId: 'pu-0006', viewer: 'Hannah Lee', date: '2026-05-29', time: '15:00', status: 'completed', agent: 'John Doe', summary: 'Keen on period features. May return with surveyor.', offerPrice: 420000 }),
     viewingBase({ id: 'v15', propertyId: 'pu-0006', viewer: 'Ben Carter', date: '2026-05-31', time: '09:00', status: 'scheduled', agent: 'John Doe' }),
+    viewingBase({ id: 'v16', propertyId: 'pu-0002', viewer: 'Grace Holloway', date: '2026-05-28', time: '16:00', status: 'completed', agent: 'Sarah Malik' }),
+    viewingBase({ id: 'v17', propertyId: 'pu-0003', viewer: 'Daniel Wright', date: '2026-06-02', time: '10:00', status: 'confirmed', agent: 'Michael Torres' }),
+    viewingBase({ id: 'v18', propertyId: 'pu-0005', viewer: 'Zoe Mitchell', date: '2026-05-26', time: '11:00', status: 'no_show', agent: 'Sarah Malik', rebook: 2 }),
+    viewingBase({ id: 'v19', propertyId: 'pu-0001', viewer: 'Kevin Brooks', date: '2026-06-03', time: '14:30', status: 'scheduled', agent: 'John Doe' }),
+    viewingBase({ id: 'v20', propertyId: 'pu-0006', viewer: 'Laura Singh', date: '2026-05-25', time: '09:30', status: 'cancelled', agent: 'John Doe', cancelReason: 'Vendor unavailable' }),
   ];
 
   const ITERATION_DESC = {
-    agent: { 1: 'Day map — your personal runway', 2: 'Property lens — your listings with funnel', 3: 'Exception lens — tasks blocked on you' },
-    owner: { 1: 'Day map — branch dispatch grid', 2: 'Property lens — portfolio health matrix', 3: 'Exception lens — systemic risk radar' },
+    owner: {
+      1: 'Morning board — agency-wide case status and blockers',
+      2: 'All viewings list — every viewing across the branch',
+      3: 'Cases table with a context rail — select a row to see what matters',
+    },
+    agent: {
+      1: 'Morning board — what to do on each case to move it forward',
+      2: 'All viewings list — full table across your cases',
+      3: 'Cases table with a context rail — scan cases, drill into context on the right',
+    },
   };
   const STATUS_BADGE = { scheduled: 'badge badge-slate', confirmed: 'badge badge-live', completed: 'badge badge-completed', no_show: 'badge badge-danger', cancelled: 'badge badge-quoted' };
   const STATUS_LABEL = { scheduled: 'Scheduled', confirmed: 'Confirmed', completed: 'Completed', no_show: 'No show', cancelled: 'Cancelled' };
@@ -977,155 +871,676 @@
   function timeToMins(t) { const [h,m]=t.split(':').map(Number); return h*60+m; }
   function hourSlot(time) { const h=Math.floor(timeToMins(time)/60); return String(h).padStart(2,'0')+':00'; }
   function compareTime(a,b) { return timeToMins(a.time)-timeToMins(b.time); }
-  function pickCls(id) { return id===selectedId?' is-selected':''; }
-  function vid(id, cls, inner) { return `<div class="${cls} is-clickable-viewing${pickCls(id)}" data-viewing-id="${esc(id)}" role="button" tabindex="0">${inner}</div>`; }
+  function scopeCases() {
+    const ids = Object.keys(CASES);
+    if (isOwner()) return ids;
+    return ids.filter(id => CASES[id].leadAgent === CURRENT_USER);
+  }
+  function caseWorkflowUrl(propertyId, workflow, viewingId) {
+    const p = PROPERTIES[propertyId];
+    const params = new URLSearchParams({ case: p.ref, workflow: workflow || 'viewings' });
+    if (viewingId) params.set('viewing', viewingId);
+    return `${CASE_WORKFLOW_URL}?${params}`;
+  }
+  function openCase(propertyId, workflow, viewingId) {
+    window.location.href = caseWorkflowUrl(propertyId, workflow, viewingId);
+  }
+  function caseViewings(propertyId) {
+    return VIEWINGS.filter(v => v.propertyId === propertyId);
+  }
+  function caseViewingsToday(propertyId) {
+    return caseViewings(propertyId).filter(v => v.date === TODAY && v.status !== 'cancelled');
+  }
+  function openCaseFromViewing(id) {
+    const v = VIEWINGS.find(x => x.id === id);
+    if (!v) return;
+    openCase(v.propertyId, 'viewings', v.id);
+  }
+  function vid(id, cls, inner) { return `<div class="${cls} is-clickable-viewing" data-viewing-id="${esc(id)}" role="link" tabindex="0">${inner}</div>`; }
 
   function pageHeader(eyebrow, title, sub, actionHtml) {
     return `<header class="page-header"><div><span class="persona-pill ${isOwner()?'is-owner':'is-agent'}">${isOwner()?'Agency owner view':'Agent view · '+esc(CURRENT_USER)}</span><p class="page-eyebrow">${esc(eyebrow)}</p><h1 class="page-title">${esc(title)}</h1><p class="page-sub">${esc(sub)}</p></div>${actionHtml?`<div class="page-actions">${actionHtml}</div>`:''}</header>`;
   }
 
-  function renderDayMapAgent() {
-    const today = scopeViewings().filter(v => v.date === TODAY && v.status !== 'cancelled').sort(compareTime);
-    const nowMins = timeToMins(NOW_TIME);
-    let next = today.find(v => timeToMins(v.time) >= nowMins && !['completed','no_show'].includes(v.status)) || today.find(v => !['completed','no_show'].includes(v.status));
-    const hero = next ? (() => { const p = prop(next); return vid(next.id, 'runway-hero', `<div class="runway-hero-label">Next up</div><div class="runway-hero-main"><div><div class="runway-hero-time">${esc(fmtClock(next.time))}</div><div class="text-h3" style="margin-top:8px">${esc(next.viewer)} at ${esc(p.address)}</div><div class="text-info-label" style="margin-top:4px">${esc(p.ref)}</div></div>${badge(next.status)}</div>`); })() : '';
-    let prevPid = null;
-    const track = today.map(v => {
-      const p = prop(v); const mins = timeToMins(v.time);
-      const isNow = mins <= nowMins && mins + (v.duration||30) > nowMins;
-      const isDone = ['completed','no_show'].includes(v.status) || mins + (v.duration||30) <= nowMins;
-      let gap = prevPid && prevPid !== v.propertyId ? `<div class="runway-gap">Travel to ${esc(p.address)}</div>` : '';
-      prevPid = v.propertyId;
-      return gap + `<div class="runway-node${isNow?' is-now':''}${isDone?' is-done':''}"><div class="runway-dot"></div>` +
-        vid(v.id, 'runway-card'+(isNow?' is-now':''), `<div class="runway-card-top"><span class="runway-card-title">${esc(fmtClock(v.time))} · ${esc(v.viewer)}</span>${badge(v.status)}</div><div class="runway-card-meta">${esc(p.address)}</div>`) + '</div>';
-    }).join('');
-    return pageHeader(AGENCY+' · Today','My day map','Click any slot to open full viewing details in the dock.','') + hero + `<div class="runway-track">${track||'<p class="text-body">No viewings today.</p>'}</div>`;
+  const MASTER_TABS = [
+    { id: 'today', label: 'Today' },
+    { id: 'upcoming', label: 'Upcoming' },
+    { id: 'needs-action', label: 'Needs action' },
+    { id: 'completed', label: 'Completed' },
+    { id: 'no_show', label: 'No show' },
+    { id: 'cancelled', label: 'Cancelled' },
+    { id: 'all', label: 'All viewings' },
+  ];
+
+  function needsAction(v) {
+    if (v.rescheduleRequested) return true;
+    if (v.status === 'no_show') return true;
+    if (v.status === 'completed' && !v.summary?.trim()) return true;
+    if (v.status === 'scheduled' && v.date <= TODAY && !v.confirmationSent) return true;
+    return false;
   }
 
-  function renderDayMapOwner() {
-    const today = VIEWINGS.filter(v => v.date === TODAY && v.status !== 'cancelled');
-    const byAgentHour = {}; AGENTS.forEach(a => { byAgentHour[a] = {}; HOURS.forEach(h => { byAgentHour[a][h] = []; }); });
-    today.forEach(v => { const slot = hourSlot(v.time); if (byAgentHour[v.agent]?.[slot]) byAgentHour[v.agent][slot].push(v); });
-    const head = HOURS.map(h => `<div class="dispatch-cell is-head${h===hourSlot(NOW_TIME)?' is-now':''}">${esc(fmtClock(h))}</div>`).join('');
-    const rows = AGENTS.map(agent => {
-      const cells = HOURS.map(h => {
-        const items = byAgentHour[agent][h]; const clash = items.length > 1;
-        const inner = !items.length ? '<span class="dispatch-chip is-gap">Free</span>' : items.map(v => {
-          const p = prop(v);
-          return vid(v.id, 'dispatch-chip'+(clash?' is-clash':''), `<strong>${esc(p.address.split(' ').slice(0,2).join(' '))}</strong><span>${esc(v.viewer)} · ${esc(fmtClock(v.time))}</span>`);
-        }).join('');
-        return `<div class="dispatch-cell${h===hourSlot(NOW_TIME)?' is-now':''}">${inner}</div>`;
-      }).join('');
-      return `<div class="dispatch-cell is-agent">${esc(agent.split(' ')[0])}</div>${cells}`;
-    }).join('');
-    return pageHeader(AGENCY+' · All agents','Branch dispatch board','Click a chip to inspect that viewing in the dock.','') +
-      `<div class="dispatch-wrap"><div class="dispatch-grid"><div class="dispatch-cell is-head is-agent">Agent</div>${head}${rows}</div></div>`;
+  function matchesMasterTab(v, tab) {
+    if (tab === 'all') return true;
+    if (tab === 'today') return v.date === TODAY && v.status !== 'cancelled';
+    if (tab === 'upcoming') return v.date > TODAY && ['scheduled', 'confirmed'].includes(v.status);
+    if (tab === 'needs-action') return needsAction(v);
+    if (tab === 'completed') return v.status === 'completed';
+    if (tab === 'no_show') return v.status === 'no_show';
+    if (tab === 'cancelled') return v.status === 'cancelled';
+    return true;
   }
 
-  function propertyStats(pid, viewings) {
-    const scheduled = viewings.filter(v => v.status === 'scheduled').length;
-    const confirmed = viewings.filter(v => v.status === 'confirmed').length;
-    const done = viewings.filter(v => v.status === 'completed').length;
-    const missingFb = viewings.filter(v => v.status === 'completed' && !v.summary?.trim()).length;
+  function matchesMasterSearch(v, q, field) {
+    if (!q) return true;
+    const p = prop(v);
+    const hay = {
+      applicant: [v.viewer, v.agent].join(' '),
+      case: [p.ref, p.address, p.area].join(' '),
+      vendor: [p.vendor, p.address].join(' '),
+    }[field] || [v.viewer, p.ref, p.address, p.vendor, v.agent].join(' ');
+    return hay.toLowerCase().includes(q);
+  }
+
+  function tabCount(tab) {
+    return scopeViewings().filter(v => matchesMasterTab(v, tab)).length;
+  }
+
+  function fmtDateShort(dateStr) {
+    const d = new Date(`${dateStr}T12:00`);
+    const today = new Date(`${TODAY}T12:00`);
+    const diff = Math.round((d - today) / 86400000);
+    if (diff === 0) return 'Today';
+    if (diff === 1) return 'Tomorrow';
+    if (diff === -1) return 'Yesterday';
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  function fmtOffer(n) {
+    if (n == null) return '—';
+    return '£' + Number(n).toLocaleString('en-GB');
+  }
+
+  function fmtEndTime(timeStr, mins = 30) {
+    const [h, m] = timeStr.split(':').map(Number);
+    return new Date(2000, 0, 1, h, m + mins).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function viewerInitials(name) {
+    return name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  function feedbackCell(v) {
+    if (v.status !== 'completed') return '<span class="fb-na">—</span>';
+    if (!v.summary?.trim()) return '<span class="fb-missing">Missing</span>';
+    return '<span class="fb-done">Recorded</span>';
+  }
+
+  function actionHint(v) {
+    if (v.rescheduleRequested) return '<span class="action-pill">Reschedule</span>';
+    if (v.status === 'no_show') return '<span class="action-pill">Rebook</span>';
+    if (v.status === 'completed' && !v.summary?.trim()) return '<span class="action-pill">Feedback</span>';
+    if (v.status === 'scheduled' && v.date <= TODAY && !v.confirmationSent) return '<span class="action-pill">Confirm</span>';
+    return '';
+  }
+
+  function computeKpis(viewings) {
+    const today = viewings.filter(v => v.date === TODAY && v.status !== 'cancelled').length;
+    const action = viewings.filter(needsAction).length;
+    const feedback = viewings.filter(v => v.status === 'completed' && !v.summary?.trim()).length;
     const offers = viewings.filter(v => v.offerPrice).length;
-    const upcoming = viewings.filter(v => v.date >= TODAY && ['scheduled','confirmed'].includes(v.status)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))[0];
-    const total = scheduled + confirmed + done || 1;
-    return { scheduled, confirmed, done, missingFb, offers, upcoming, total };
+    return { today, action, feedback, offers };
   }
 
-  function renderPropertyLensAgent() {
-    const cards = [...new Set(scopeViewings().map(v => v.propertyId))].map(pid => {
-      const p = PROPERTIES[pid]; const viewings = scopeViewings().filter(v => v.propertyId === pid);
-      const s = propertyStats(pid, viewings); const pct = n => Math.round((n/s.total)*100);
-      const next = s.upcoming;
-      const nextHtml = next ? vid(next.id, 'portfolio-next', `<div class="portfolio-next-label">Your next on this case</div><div class="text-body-semibold">${esc(next.viewer)}</div><div class="text-info-label">${esc(fmtClock(next.time))}</div>`) : '<p class="text-info-label">No upcoming viewings</p>';
-      return `<article class="portfolio-card"><div class="portfolio-card-head"><strong>${esc(p.address)}</strong><span>${esc(p.ref)}</span></div><div class="funnel"><div class="funnel-seg is-scheduled" style="width:${pct(s.scheduled)}%"></div><div class="funnel-seg is-confirmed" style="width:${pct(s.confirmed)}%"></div><div class="funnel-seg is-done" style="width:${pct(s.done)}%"></div></div>${nextHtml}</article>`;
+  function todayViewingAction(v) {
+    if (v.rescheduleRequested) return 'Reschedule';
+    if (v.status === 'no_show') return 'Rebook';
+    if (v.status === 'completed' && !v.summary?.trim()) return 'Record feedback';
+    if (v.status === 'scheduled' && !v.confirmationSent) return 'Send confirmation';
+    if (v.status === 'confirmed') return 'Attend viewing';
+    if (v.status === 'completed') return 'Done';
+    return 'Open case';
+  }
+
+  function renderJourneyRail(steps) {
+    return WORKFLOW_STEPS.map((step, i) => {
+      const state = steps[step.id] || 'pending';
+      const conn = i < WORKFLOW_STEPS.length - 1
+        ? `<span class="journey-connector${state === 'done' ? ' is-done' : ''}"></span>` : '';
+      return `<div class="journey-step is-${state}"><span class="journey-dot"></span>${esc(step.label)}</div>${conn}`;
     }).join('');
-    return pageHeader(AGENCY+' · Your cases','My property portfolio','Open the next slot on any case.','') + `<div class="portfolio-strip">${cards}</div>`;
   }
 
-  function renderPropertyLensOwner() {
-    const rows = Object.keys(PROPERTIES).map(pid => {
-      const p = PROPERTIES[pid]; const viewings = VIEWINGS.filter(v => v.propertyId === pid);
-      if (!viewings.length) return '';
-      const s = propertyStats(pid, viewings);
-      const urgent = viewings.find(v => v.status === 'completed' && !v.summary?.trim()) || viewings.find(v => v.status === 'no_show') || viewings[0];
-      const lead = [...viewings.reduce((m,v)=>m.set(v.agent,(m.get(v.agent)||0)+1),new Map())].sort((a,b)=>b[1]-a[1])[0][0];
-      const fbScore = s.done ? Math.round(((s.done-s.missingFb)/s.done)*100) : 100;
-      const risk = s.missingFb >= 2 ? 'high' : s.missingFb ? 'med' : 'low';
-      return `<tr class="is-clickable-viewing${pickCls(urgent.id)}" data-viewing-id="${esc(urgent.id)}" tabindex="0" role="button"><td><strong>${esc(p.address)}</strong></td><td>${s.scheduled+s.confirmed}</td><td>${s.missingFb||'Clear'}</td><td>${s.offers||'—'}</td><td>${esc(lead.split(' ')[0])}</td><td>${risk}</td></tr>`;
-    }).filter(Boolean).join('');
-    return pageHeader(AGENCY+' · Portfolio','Listing health matrix','Click a row to open the most urgent viewing on that case.','') +
-      `<div class="health-matrix-wrap"><table class="table health-matrix"><thead><tr><th>Property</th><th>Upcoming</th><th>Feedback</th><th>Offers</th><th>Lead</th><th>Risk</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  }
+  function renderMorningBoard() {
+    const viewings = scopeViewings();
+    const caseIds = scopeCases();
+    const todayViewings = viewings.filter(v => v.date === TODAY && v.status !== 'cancelled').sort(compareTime);
+    const nowMins = timeToMins(NOW_TIME);
+    const blockerCount = caseIds.reduce((n, id) => n + (CASES[id].blockers?.length || 0), 0);
+    const userName = isOwner() ? 'Alex Isidro' : CURRENT_USER;
+    const roleLabel = isOwner() ? `Manager · ${AGENCY}` : `Agent · ${AGENCY}`;
+    const dateLabel = new Date(`${TODAY}T12:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
-  function buildTasks(viewings) {
-    const tasks = [];
-    viewings.forEach(v => {
+    const todayHtml = todayViewings.length ? todayViewings.map(v => {
       const p = prop(v);
-      if (v.status === 'no_show') tasks.push({ priority:'high', title:'Rebook no show', context:`${v.viewer} · ${p.address}`, due:'Today', v });
-      if (v.status === 'completed' && !v.summary?.trim()) tasks.push({ priority:'high', title:'Record feedback', context:`${v.viewer} · ${p.address}`, due:'Overdue', v });
-      if (v.status === 'scheduled' && v.date <= TODAY) tasks.push({ priority:'med', title:'Chase confirmation', context:`${v.viewer} · ${p.address}`, due:fmtClock(v.time), v });
+      const mins = timeToMins(v.time);
+      const isNow = mins <= nowMins && mins + (v.duration || 30) > nowMins;
+      const isDone = ['completed', 'no_show'].includes(v.status) || mins + (v.duration || 30) <= nowMins;
+      return `<div class="today-slot is-clickable-viewing${isNow ? ' is-now' : ''}${isDone ? ' is-done' : ''}" data-viewing-id="${esc(v.id)}" tabindex="0" role="link">
+        <div class="today-slot-time">${esc(fmtClock(v.time))}</div>
+        <div class="today-slot-main">
+          <strong>${esc(v.viewer)}</strong>
+          <span>${esc(p.ref)} · ${esc(p.address)}</span>
+        </div>
+        <div class="today-slot-right">
+          ${badge(v.status)}
+          <div class="today-slot-action">${esc(todayViewingAction(v))}</div>
+        </div>
+      </div>`;
+    }).join('') : '<p class="text-body" style="color:var(--fg-muted)">No viewings scheduled for today.</p>';
+
+    const filteredCases = caseIds.filter(id => {
+      if (morningFilter === 'blocked') return (CASES[id].blockers?.length || 0) > 0;
+      if (morningFilter === 'viewings-today') return caseViewingsToday(id).length > 0;
+      return true;
     });
-    return tasks.sort((a,b)=>({high:0,med:1,low:2}[a.priority]-{high:0,med:1,low:2}[b.priority]));
+
+    const casesHtml = filteredCases.map(id => {
+      const c = CASES[id];
+      const p = PROPERTIES[id];
+      const cv = caseViewings(id);
+      const todayCount = caseViewingsToday(id).length;
+      const hasBlockers = (c.blockers?.length || 0) > 0;
+      const cardCls = `case-card${hasBlockers ? ' is-blocked' : ''}${todayCount ? ' is-today' : ''}`;
+      const ns = c.nextStep;
+      const blockersHtml = (c.blockers || []).map(b =>
+        `<button type="button" class="blocker-chip" data-open-case data-case-id="${esc(id)}" data-workflow="${esc(b.workflow)}"${b.viewingId ? ` data-viewing-id="${esc(b.viewingId)}"` : ''} title="${esc(b.detail)}">${esc(b.label)}</button>`
+      ).join('');
+      return `<article class="${cardCls}">
+        <div class="case-card-top">
+          <div>
+            <div class="case-card-ref">${esc(p.ref)}</div>
+            <div class="case-card-title">${esc(p.address)}</div>
+            <div class="case-card-vendor">${esc(p.vendor)} · ${esc(c.leadAgent.split(' ')[0])}</div>
+          </div>
+          <span class="case-stage-pill">${esc(c.stage)}</span>
+        </div>
+        <div class="journey-rail">${renderJourneyRail(c.steps)}</div>
+        <button type="button" class="case-next" data-open-case data-case-id="${esc(id)}" data-workflow="${esc(ns.workflow)}"${ns.viewingId ? ` data-viewing-id="${esc(ns.viewingId)}"` : ''}>
+          <div>
+            <div class="case-next-label">Next step</div>
+            <div class="case-next-text">${esc(ns.label)}</div>
+            <div class="case-next-detail">${esc(ns.detail)}</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        ${blockersHtml ? `<div class="case-blockers">${blockersHtml}</div>` : ''}
+        <div class="case-meta-row">
+          <span>Viewings today: <strong>${todayCount}</strong></span>
+          <span>Total viewings: <strong>${cv.length}</strong></span>
+          ${p.vendorUpdateDays > 3 ? `<span>Vendor update: <strong style="color:var(--danger-600)">${p.vendorUpdateDays}d ago</strong></span>` : ''}
+        </div>
+      </article>`;
+    }).join('');
+
+    return `<div class="morning-board">
+      <div class="morning-top">
+        <div class="morning-greet">
+          <h1>Good morning, ${esc(userName.split(' ')[0])}</h1>
+          <p>${esc(dateLabel)} · ${esc(roleLabel)}</p>
+        </div>
+        <div class="morning-stats">
+          <div class="morning-stat is-today"><span class="morning-stat-label">Viewings today</span><strong>${todayViewings.length}</strong></div>
+          <div class="morning-stat is-alert"><span class="morning-stat-label">Blockers</span><strong>${blockerCount}</strong></div>
+          <div class="morning-stat"><span class="morning-stat-label">Your cases</span><strong>${caseIds.length}</strong></div>
+          <div class="morning-stat"><span class="morning-stat-label">Needs action</span><strong>${viewings.filter(needsAction).length}</strong></div>
+        </div>
+      </div>
+
+      <section class="today-panel">
+        <div class="panel-head">
+          <h2>Today's viewings</h2>
+          <span>${todayViewings.length} across ${new Set(todayViewings.map(v => v.propertyId)).size} properties</span>
+        </div>
+        <div class="today-timeline">${todayHtml}</div>
+      </section>
+
+      <section class="cases-panel">
+        <div class="cases-toolbar">
+          <h2>Your cases — what moves each one forward</h2>
+          <div class="cases-filters" id="morning-filters">
+            <button type="button" class="cases-filter${morningFilter === 'all' ? ' is-active' : ''}" data-morning-filter="all">All cases</button>
+            <button type="button" class="cases-filter${morningFilter === 'blocked' ? ' is-active' : ''}" data-morning-filter="blocked">Has blockers</button>
+            <button type="button" class="cases-filter${morningFilter === 'viewings-today' ? ' is-active' : ''}" data-morning-filter="viewings-today">Viewings today</button>
+          </div>
+        </div>
+        <div class="case-list">${casesHtml || '<p class="text-body" style="color:var(--fg-muted)">No cases match this filter.</p>'}</div>
+      </section>
+    </div>`;
   }
 
-  function renderExceptionLensAgent() {
-    const tasks = buildTasks(scopeViewings());
-    const stack = tasks.length ? tasks.map(t => `<button type="button" class="task-card is-clickable-viewing${pickCls(t.v.id)}" data-viewing-id="${esc(t.v.id)}"><div class="task-priority is-${t.priority}"></div><div><div class="task-title">${esc(t.title)}</div><div class="task-context">${esc(t.context)}</div></div><div class="task-due">${esc(t.due)}</div></button>`).join('') : '<div class="message message-success"><div class="message-body"><div class="message-title">All clear</div></div></div>';
-    return pageHeader(AGENCY+' · Action queue','What needs you','Each task opens the viewing in the dock.','') + `<div class="task-stack">${stack}</div>`;
+  function bindMorningBoard() {
+    const mount = $('#mount-1');
+    if (!mount) return;
+    mount.querySelectorAll('[data-morning-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        morningFilter = btn.dataset.morningFilter;
+        renderIteration(1);
+        bindMorningBoard();
+      });
+    });
   }
 
-  function renderExceptionLensOwner() {
-    const missingFb = VIEWINGS.filter(v => v.status === 'completed' && !v.summary?.trim());
-    const unconfirmed = VIEWINGS.filter(v => v.status === 'scheduled' && v.date <= TODAY);
-    const noShows = VIEWINGS.filter(v => v.status === 'no_show');
-    const panels = [
-      { title:'Feedback debt', count:missingFb.length, items: missingFb.slice(0,3).map(v=>({v, strong:v.viewer, span:prop(v).address})) },
-      { title:'Stuck confirmations', count:unconfirmed.length, items: unconfirmed.slice(0,3).map(v=>({v, strong:v.viewer, span:prop(v).address})) },
-      { title:'No shows', count:noShows.length, items: noShows.map(v=>({v, strong:v.viewer, span:prop(v).address})) },
-    ];
-    const grid = panels.map(p => `<article class="radar-panel"><div class="radar-panel-head"><h2 class="text-h3">${esc(p.title)}</h2><div class="radar-count">${p.count}</div></div><div class="radar-list">${p.items.map(i=>`<div class="radar-item is-clickable-viewing${pickCls(i.v.id)}" data-viewing-id="${esc(i.v.id)}" tabindex="0" role="button"><div><strong>${esc(i.strong)}</strong><span>${esc(i.span)}</span></div></div>`).join('')||'<p class="text-info-label">Clear</p>'}</div></article>`).join('');
-    return pageHeader(AGENCY+' · Exceptions','Risk radar','Click an item to open that viewing.','') + `<div class="radar-grid">${grid}</div>`;
+  function renderMasterList() {
+    const viewings = scopeViewings();
+    const kpis = computeKpis(viewings);
+    const q = masterSearch.toLowerCase().trim();
+    const filtered = viewings
+      .filter(v => matchesMasterTab(v, masterTab))
+      .filter(v => matchesMasterSearch(v, q, masterSearchField))
+      .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+    const needsActionCount = viewings.filter(needsAction).length;
+    const roleLabel = isOwner() ? `Manager · ${AGENCY}` : `Agent · ${AGENCY}`;
+    const userName = isOwner() ? 'Alex Isidro' : CURRENT_USER;
+
+    const tabsHtml = MASTER_TABS.map(t =>
+      `<button type="button" class="status-tab${masterTab === t.id ? ' is-active' : ''}" data-master-tab="${t.id}" role="tab" aria-selected="${masterTab === t.id}">${esc(t.label)} <span class="tab-count">(${tabCount(t.id)})</span></button>`
+    ).join('');
+
+    const copyIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    const menuIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>`;
+
+    const rows = filtered.map(v => {
+      const p = prop(v);
+      const fullAddr = `${p.address}, ${p.area}`;
+      const offerHot = v.offerPrice && p.price && v.offerPrice >= p.price * 0.95;
+      return `<tr class="is-clickable-viewing" data-viewing-id="${esc(v.id)}" tabindex="0" role="link" title="Open ${esc(p.ref)} viewings workflow">
+        <td class="td-check" onclick="event.stopPropagation()"><input type="checkbox" aria-label="Select ${esc(v.viewer)}"></td>
+        <td><a class="case-link" href="${esc(caseWorkflowUrl(v.propertyId, 'viewings', v.id))}" onclick="event.stopPropagation()">${esc(p.ref)}${copyIcon}</a></td>
+        <td class="td-datetime"><strong>${esc(fmtDateShort(v.date))}</strong><span>${esc(fmtClock(v.time))} – ${esc(fmtEndTime(v.time, v.duration || 30))}</span></td>
+        <td class="td-applicant"><div class="avatar avatar-sm">${esc(viewerInitials(v.viewer))}</div>${esc(v.viewer)}</td>
+        <td class="td-address">${esc(fullAddr)}</td>
+        <td>${esc(p.vendor.split(' ').slice(-1)[0])}</td>
+        <td class="td-agent"><div class="avatar avatar-sm">${esc(viewerInitials(v.agent))}</div>${esc(v.agent.split(' ')[0])}</td>
+        <td>${badge(v.status)}</td>
+        <td>${feedbackCell(v)}</td>
+        <td class="offer-cell${offerHot ? ' is-hot' : ''}">${esc(fmtOffer(v.offerPrice))}</td>
+        <td>${actionHint(v)}</td>
+        <td onclick="event.stopPropagation()"><button type="button" class="btn-icon" aria-label="Actions">${menuIcon}</button></td>
+      </tr>`;
+    }).join('');
+
+  const emptyRow = `<tr><td colspan="12" style="text-align:center;padding:32px;color:var(--fg-muted)">No viewings match this filter.</td></tr>`;
+
+    return `<div class="master-dashboard">
+      <div class="stats-bar">
+        <div class="stats-user">
+          <div class="avatar avatar-sm">${esc(viewerInitials(userName))}</div>
+          <div class="stats-user-text">${esc(userName)} <span class="stats-user-role">· ${esc(roleLabel)}</span></div>
+        </div>
+        <div class="stats-kpis">
+          <div class="kpi">Viewings today<strong>${kpis.today}</strong></div>
+          <div class="kpi">Needs action<strong>${kpis.action}</strong></div>
+          <div class="kpi">Pending feedback<strong>${kpis.feedback}</strong></div>
+          <div class="kpi">Offers logged<strong>${kpis.offers}</strong></div>
+        </div>
+        <div class="stats-actions">
+          <div class="search-row">
+            <select class="input" id="master-search-field" aria-label="Search by">
+              <option value="applicant"${masterSearchField === 'applicant' ? ' selected' : ''}>Applicant or agent</option>
+              <option value="case"${masterSearchField === 'case' ? ' selected' : ''}>Case ref or address</option>
+              <option value="vendor"${masterSearchField === 'vendor' ? ' selected' : ''}>Vendor name</option>
+            </select>
+            <div class="search-field">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="master-search-input" placeholder="Type to search…" value="${esc(masterSearch)}" aria-label="Search viewings">
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm">Export</button>
+          <button type="button" class="btn btn-primary btn-sm">Create viewing</button>
+        </div>
+      </div>
+      <div class="dashboard-scroll">
+        <h2 class="section-heading">
+          All viewings
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </h2>
+        <div class="status-tabs" role="tablist" aria-label="Viewing status" id="master-status-tabs">${tabsHtml}</div>
+        <div class="filter-bar">
+          <div class="filter-chips">
+            <button type="button" class="filter-chip" data-master-tab="needs-action">Needs action <span class="chip-count">${needsActionCount}</span></button>
+            <button type="button" class="filter-chip" data-master-tab="today">Today <span class="chip-count">${tabCount('today')}</span></button>
+            <button type="button" class="filter-chip">Sort <span class="chip-count">2</span></button>
+            <span class="filter-links">
+              <button type="button" id="master-reset-view">Reset view</button>
+              <button type="button">Save as new view</button>
+            </span>
+          </div>
+          <div class="view-as">
+            <span>View as</span>
+            <select class="input" id="master-view-as" aria-label="Saved view">
+              <option${masterTab === 'today' ? ' selected' : ''} value="today">Today</option>
+              <option${masterTab === 'needs-action' ? ' selected' : ''} value="needs-action">Needs action</option>
+              <option${masterTab === 'all' ? ' selected' : ''} value="all">All viewings</option>
+            </select>
+          </div>
+        </div>
+        <div class="master-table-wrap">
+          <table class="master-table">
+            <thead>
+              <tr>
+                <th class="th-check"><input type="checkbox" aria-label="Select all"></th>
+                <th>Case</th>
+                <th>Date &amp; time</th>
+                <th>Applicant</th>
+                <th>Property</th>
+                <th>Vendor</th>
+                <th>Agent</th>
+                <th>Status</th>
+                <th>Feedback</th>
+                <th>Offer</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>${rows || emptyRow}</tbody>
+          </table>
+          <div class="table-footer">
+            <span>Showing ${filtered.length} of ${viewings.length} viewings${isOwner() ? '' : ' assigned to you'}</span>
+            <span>${esc(new Date(`${TODAY}T12:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
   }
 
-  const RENDERERS = { 1:{agent:renderDayMapAgent,owner:renderDayMapOwner}, 2:{agent:renderPropertyLensAgent,owner:renderPropertyLensOwner}, 3:{agent:renderExceptionLensAgent,owner:renderExceptionLensOwner} };
-
-  function renderIteration(n) { const m = $(`#mount-${n}`); if (m) m.innerHTML = (RENDERERS[n][persona]||(()=>''))(); }
-
-  function openViewingById(id) { if (!VIEWINGS.find(v => v.id === id)) return; selectedId = id; dockActivityFullView = false; renderAll(); }
-
-  function setupViewingClicks() {
-    const c = $('#dashboard-canvas'); if (!c) return;
-    c.addEventListener('click', e => { const el = e.target.closest('[data-viewing-id]'); if (el) openViewingById(el.dataset.viewingId); });
-    c.addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const el = e.target.closest('[data-viewing-id]'); if (!el) return; e.preventDefault(); openViewingById(el.dataset.viewingId); });
-    $('#toast-close')?.addEventListener('click', dismissToast);
+  function bindMasterList() {
+    const mount = $('#mount-2');
+    if (!mount) return;
+    mount.querySelectorAll('[data-master-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        masterTab = btn.dataset.masterTab;
+        renderIteration(2);
+        bindMasterList();
+      });
+    });
+    const searchInput = mount.querySelector('#master-search-input');
+    searchInput?.addEventListener('input', e => {
+      masterSearch = e.target.value;
+      renderIteration(2);
+      bindMasterList();
+      const input = mount.querySelector('#master-search-input');
+      if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+    });
+    mount.querySelector('#master-search-field')?.addEventListener('change', e => {
+      masterSearchField = e.target.value;
+      renderIteration(2);
+      bindMasterList();
+    });
+    mount.querySelector('#master-view-as')?.addEventListener('change', e => {
+      masterTab = e.target.value;
+      renderIteration(2);
+      bindMasterList();
+    });
+    mount.querySelector('#master-reset-view')?.addEventListener('click', () => {
+      masterTab = 'today';
+      masterSearch = '';
+      masterSearchField = 'applicant';
+      renderIteration(2);
+      bindMasterList();
+    });
   }
 
-  function setupDockMenu() {
-    const btn = $('#dock-menu-btn'), dd = $('#dock-dropdown');
-    if (!btn || !dd) return;
-    btn.addEventListener('click', e => { e.stopPropagation(); dd.hidden = !dd.hidden; btn.setAttribute('aria-expanded', String(!dd.hidden)); });
-    document.addEventListener('click', () => { dd.hidden = true; btn.setAttribute('aria-expanded', 'false'); });
-    dd.addEventListener('click', e => {
-      const item = e.target.closest('[data-action]'); if (!item) return;
-      const v = getSelected(); if (!v) return;
-      dd.hidden = true;
-      const a = item.dataset.action;
-      if (a === 'mark-confirmed') { v.status = 'confirmed'; showToast('Updated', v.viewer + ' confirmed.'); }
-      else if (a === 'mark-completed') { markViewingAsComplete(v); showToast('Updated', v.viewer + ' completed.'); }
-      else if (a === 'mark-noshow') { markViewingAsNoShow(v); showToast('Updated', v.viewer + ' no show.'); }
-      else if (a === 'cancel-viewing') { v.status = 'cancelled'; v.cancelReason = 'Cancelled'; showToast('Cancelled', v.viewer + ' viewing cancelled.'); }
-      else if (a === 'delete-viewing') { const i = VIEWINGS.findIndex(x => x.id === v.id); if (i >= 0) VIEWINGS.splice(i, 1); selectedId = null; }
-      else showToast('Full case flow', 'Reschedule and applicant edit live in agent-view-v5.', 'info');
-      renderAll();
+  function buildAgencyContextRail(viewings) {
+    const caseIds = scopeCases();
+    const todayViewings = viewings.filter(v => v.date === TODAY && v.status !== 'cancelled');
+    const blockers = caseIds.reduce((n, id) => n + (CASES[id].blockers?.length || 0), 0);
+    const offerCases = caseIds.filter(id => CASES[id].steps?.offer === 'active').length;
+    return `
+      <div class="ctx-card is-accent">
+        <div class="ctx-card-head"><span class="ctx-card-title">Your day</span></div>
+        <h3>${todayViewings.length} viewings today</h3>
+        <p>Across ${new Set(todayViewings.map(v => v.propertyId)).size} properties · ${caseIds.length} active cases</p>
+        <div class="ctx-stat-grid">
+          <div class="ctx-stat"><label>Blockers</label><strong>${blockers}</strong></div>
+          <div class="ctx-stat"><label>Needs action</label><strong>${viewings.filter(needsAction).length}</strong></div>
+          <div class="ctx-stat"><label>At offer stage</label><strong>${offerCases}</strong></div>
+          <div class="ctx-stat"><label>Missing feedback</label><strong>${viewings.filter(v => v.status === 'completed' && !v.summary?.trim()).length}</strong></div>
+        </div>
+      </div>
+      <div class="ctx-card">
+        <div class="ctx-card-head"><span class="ctx-card-title">Coming up</span></div>
+        <div class="ctx-list">
+          ${todayViewings.slice(0, 4).map(v => {
+            const p = prop(v);
+            return `<button type="button" class="ctx-card-action" data-select-case data-case-id="${esc(v.propertyId)}">
+              <div><strong>${esc(fmtClock(v.time))} · ${esc(v.viewer)}</strong><span>${esc(p.ref)}</span></div>
+            </button>`;
+          }).join('') || '<p>No viewings left today.</p>'}
+        </div>
+      </div>
+      <div class="ctx-card">
+        <div class="ctx-card-head"><span class="ctx-card-title">Branch signals</span></div>
+        <p>Cases with vendor updates overdue, stuck listings, or offers awaiting selection surface here when you select a row.</p>
+      </div>`;
+  }
+
+  function buildCaseContextRail(id) {
+    const c = CASES[id];
+    const p = PROPERTIES[id];
+    const today = caseViewingsToday(id);
+    const all = caseViewings(id);
+    const offers = all.filter(v => v.offerPrice);
+    const ns = c.nextStep;
+    const miniRail = WORKFLOW_STEPS.map(s => {
+      const st = c.steps[s.id] || 'pending';
+      return `<span class="ctx-mini-step is-${st}">${esc(s.label)}</span>`;
+    }).join('');
+
+    const todayList = today.length ? today.map(v =>
+      `<button type="button" class="ctx-card-action" data-open-case data-case-id="${esc(id)}" data-workflow="viewings" data-viewing-id="${esc(v.id)}">
+        <div><strong>${esc(fmtClock(v.time))} · ${esc(v.viewer)}</strong><span>${esc(STATUS_LABEL[v.status] || v.status)} · ${esc(todayViewingAction(v))}</span></div>
+      </button>`
+    ).join('') : '<p>No viewings scheduled today on this case.</p>';
+
+    const blockersCard = (c.blockers?.length) ? `
+      <div class="ctx-card is-alert">
+        <div class="ctx-card-head"><span class="ctx-card-title">Blockers</span><span class="blocker-count">${c.blockers.length}</span></div>
+        <div class="ctx-list">
+          ${c.blockers.map(b => `
+            <button type="button" class="ctx-card-action" data-open-case data-case-id="${esc(id)}" data-workflow="${esc(b.workflow)}"${b.viewingId ? ` data-viewing-id="${esc(b.viewingId)}"` : ''}>
+              <div><strong>${esc(b.label)}</strong><span>${esc(b.detail)}</span></div>
+            </button>`).join('')}
+        </div>
+      </div>` : '';
+
+    const offersCard = offers.length ? `
+      <div class="ctx-card">
+        <div class="ctx-card-head"><span class="ctx-card-title">Offers on the table</span></div>
+        <div class="ctx-list">
+          ${offers.map(v => `
+            <div class="ctx-list-item">
+              <div><strong>${esc(v.viewer)}</strong><span>${esc(fmtOffer(v.offerPrice))}</span></div>
+            </div>`).join('')}
+        </div>
+      </div>` : '';
+
+    const vendorWarn = p.vendorUpdateDays > 3
+      ? `<div class="ctx-card is-alert">
+          <div class="ctx-card-head"><span class="ctx-card-title">Vendor pulse</span></div>
+          <p><strong>Last vendor update ${p.vendorUpdateDays} days ago.</strong> Consider sending a viewing summary before today's appointments.</p>
+          <button type="button" class="btn btn-secondary btn-sm" style="width:100%" data-open-case data-case-id="${esc(id)}" data-workflow="viewings">Send vendor update</button>
+        </div>` : '';
+
+    return `
+      <div class="ctx-card is-accent">
+        <div class="ctx-card-head"><span class="ctx-card-title">Selected case</span><span class="case-stage-pill">${esc(c.stage)}</span></div>
+        <h3>${esc(p.ref)}</h3>
+        <p>${esc(p.address)}, ${esc(p.area)}</p>
+        <p>${esc(p.vendor)} · ${esc(c.leadAgent)} · ${esc('£' + p.price.toLocaleString('en-GB'))}</p>
+        <div class="ctx-mini-rail">${miniRail}</div>
+        <button type="button" class="btn btn-primary btn-sm" style="width:100%" data-open-case data-case-id="${esc(id)}" data-workflow="${esc(ns.workflow)}"${ns.viewingId ? ` data-viewing-id="${esc(ns.viewingId)}"` : ''}>Open case workflow</button>
+      </div>
+      <div class="ctx-card">
+        <div class="ctx-card-head"><span class="ctx-card-title">Next step</span></div>
+        <h3>${esc(ns.label)}</h3>
+        <p>${esc(ns.detail)}</p>
+      </div>
+      ${blockersCard}
+      <div class="ctx-card">
+        <div class="ctx-card-head"><span class="ctx-card-title">Viewings today</span>${today.length ? `<span class="today-dot">${today.length}</span>` : ''}</div>
+        ${todayList}
+      </div>
+      ${offersCard}
+      ${vendorWarn}
+      <div class="ctx-card">
+        <div class="ctx-card-head"><span class="ctx-card-title">Case activity</span></div>
+        <div class="ctx-list">
+          <div class="ctx-list-item"><div><strong>${all.filter(v => v.status === 'completed').length} completed viewings</strong><span>${all.length} total on this case</span></div></div>
+          <div class="ctx-list-item"><div><strong>${offers.length} offer${offers.length === 1 ? '' : 's'} logged</strong><span>From applicant viewings</span></div></div>
+        </div>
+      </div>`;
+  }
+
+  function renderSplitView() {
+    const viewings = scopeViewings();
+    let caseIds = scopeCases();
+    if (splitFilter === 'blocked') caseIds = caseIds.filter(id => (CASES[id].blockers?.length || 0) > 0);
+    if (splitFilter === 'today') caseIds = caseIds.filter(id => caseViewingsToday(id).length > 0);
+    if (!splitSelectedId || !caseIds.includes(splitSelectedId)) splitSelectedId = caseIds[0] || null;
+
+    const rows = caseIds.map(id => {
+      const c = CASES[id];
+      const p = PROPERTIES[id];
+      const todayCount = caseViewingsToday(id).length;
+      const blockerN = c.blockers?.length || 0;
+      const sel = id === splitSelectedId ? ' is-selected' : '';
+      const rowCls = [todayCount ? 'is-today' : '', blockerN ? 'is-blocked' : '', sel.trim()].filter(Boolean).join(' ');
+      return `<tr class="${rowCls}" data-select-case data-case-id="${esc(id)}" tabindex="0" role="row" aria-selected="${id === splitSelectedId}">
+        <td><div class="case-table-ref">${esc(p.ref)}</div><div class="case-table-addr">${esc(p.address)}</div></td>
+        <td><span class="case-stage-pill">${esc(c.stage)}</span></td>
+        <td><div class="case-table-next">${esc(c.nextStep.label)}</div></td>
+        <td><span class="blocker-count${blockerN ? '' : ' is-clear'}">${blockerN || '—'}</span></td>
+        <td>${todayCount ? `<span class="today-dot">${todayCount}</span>` : '<span style="color:var(--fg-muted);font-size:var(--fs-xs)">—</span>'}</td>
+        <td>${esc(c.leadAgent.split(' ')[0])}</td>
+      </tr>`;
+    }).join('');
+
+    const railHtml = splitSelectedId
+      ? buildCaseContextRail(splitSelectedId)
+      : buildAgencyContextRail(viewings);
+
+    return `<div class="split-layout">
+      <div class="split-main">
+        <div class="split-main-head">
+          <h2>Your cases</h2>
+          <div class="cases-filters" id="split-filters">
+            <button type="button" class="cases-filter${splitFilter === 'all' ? ' is-active' : ''}" data-split-filter="all">All</button>
+            <button type="button" class="cases-filter${splitFilter === 'blocked' ? ' is-active' : ''}" data-split-filter="blocked">Has blockers</button>
+            <button type="button" class="cases-filter${splitFilter === 'today' ? ' is-active' : ''}" data-split-filter="today">Viewings today</button>
+          </div>
+        </div>
+        <div class="split-main-body">
+          <table class="case-table">
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Stage</th>
+                <th>Next step</th>
+                <th>Blockers</th>
+                <th>Today</th>
+                <th>Agent</th>
+              </tr>
+            </thead>
+            <tbody>${rows || '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--fg-muted)">No cases match this filter.</td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>
+      <aside class="split-rail" aria-label="Context">${railHtml}</aside>
+    </div>`;
+  }
+
+  function bindSplitView() {
+    const mount = $('#mount-3');
+    if (!mount) return;
+    mount.querySelectorAll('[data-split-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        splitFilter = btn.dataset.splitFilter;
+        renderIteration(3);
+        bindSplitView();
+      });
+    });
+    mount.querySelectorAll('[data-select-case]').forEach(el => {
+      el.addEventListener('click', e => {
+        if (e.target.closest('[data-open-case]')) return;
+        e.stopPropagation();
+        splitSelectedId = el.dataset.caseId;
+        renderIteration(3);
+        bindSplitView();
+      });
+    });
+  }
+
+  const RENDERERS = {
+    1: { agent: renderMorningBoard, owner: renderMorningBoard },
+    2: { agent: renderMasterList, owner: renderMasterList },
+    3: { agent: renderSplitView, owner: renderSplitView },
+  };
+
+  function renderIteration(n) {
+    const m = $(`#mount-${n}`);
+    if (m) m.innerHTML = (RENDERERS[n][persona] || (() => ''))();
+    if (n === 1) bindMorningBoard();
+    if (n === 2) bindMasterList();
+    if (n === 3) bindSplitView();
+  }
+
+  function setupCaseNavigation() {
+    const c = $('#dashboard-canvas');
+    if (!c) return;
+    c.addEventListener('click', e => {
+      const selectEl = e.target.closest('[data-select-case]');
+      if (selectEl && !e.target.closest('[data-open-case]') && activeIteration === 3 && selectEl.closest('.case-table')) {
+        splitSelectedId = selectEl.dataset.caseId;
+        renderIteration(3);
+        bindSplitView();
+        return;
+      }
+      const openCaseEl = e.target.closest('[data-open-case]');
+      if (openCaseEl) {
+        openCase(openCaseEl.dataset.caseId, openCaseEl.dataset.workflow, openCaseEl.dataset.viewingId || null);
+        return;
+      }
+      const el = e.target.closest('[data-viewing-id]');
+      if (el && !el.closest('[data-open-case]')) openCaseFromViewing(el.dataset.viewingId);
+    });
+    c.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const selectEl = e.target.closest('[data-select-case]');
+      if (selectEl && activeIteration === 3 && selectEl.closest('.case-table')) {
+        e.preventDefault();
+        splitSelectedId = selectEl.dataset.caseId;
+        renderIteration(3);
+        bindSplitView();
+        return;
+      }
+      const openCaseEl = e.target.closest('[data-open-case]');
+      if (openCaseEl) {
+        e.preventDefault();
+        openCase(openCaseEl.dataset.caseId, openCaseEl.dataset.workflow, openCaseEl.dataset.viewingId || null);
+        return;
+      }
+      const el = e.target.closest('[data-viewing-id]');
+      if (!el || el.closest('[data-open-case]')) return;
+      e.preventDefault();
+      openCaseFromViewing(el.dataset.viewingId);
     });
   }
 
   function renderAll() {
     $('#iteration-desc').textContent = ITERATION_DESC[persona][activeIteration] || '';
-    [1,2,3].forEach(renderIteration);
-    renderDock();
+    [1, 2, 3].forEach(renderIteration);
   }
 
   function switchPersona(p) {
@@ -1153,636 +1568,7 @@
   $('#persona-tabs').addEventListener('click', e => { const btn = e.target.closest('[data-persona]'); if (btn && btn.dataset.persona !== persona) switchPersona(btn.dataset.persona); });
   $('#iteration-tabs').addEventListener('click', e => { const btn = e.target.closest('[data-iteration]'); if (btn) switchIteration(Number(btn.dataset.iteration)); });
 
-  const BUYING_SITUATION_OPTIONS = [
-    { value: 'first-time-buyer', label: 'First-time buyer' },
-    { value: 'property-to-sell', label: 'Has property to sell (no offer yet)' },
-    { value: 'property-under-offer', label: 'Has property under offer' },
-    { value: 'cash-buyer', label: 'Cash buyer' },
-    { value: 'investor', label: 'Investor / Buy-to-let' },
-  ];
-
-
-  const DOCK_STATUS_LABEL = { scheduled: "Scheduled", confirmed: "Confirmed", completed: "Completed", cancelled: "Cancelled", no_show: "No Show" };
-  const BADGE_ICONS = {
-    scheduled: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.67" width="12" height="10.67" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M2 5.33h12M5.33 1.33v2M10.67 1.33v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`,
-    confirmed:  `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.67" width="12" height="10.67" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M2 5.33h12M5.33 1.33v2M10.67 1.33v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5 9.5l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    completed:  `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8.5l3.5 3.5 8.5-8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    no_show:    `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5.33v2.67" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="10.67" r=".6" fill="currentColor"/></svg>`,
-    cancelled:  `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 13.5c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="11.5" y1="8.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="13.5" y1="8.5" x2="11.5" y2="10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`,
-  };
-  const OFFER_BADGE_ICON = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 3.5h5a2.25 2.25 0 0 1 0 4.5h-5M8 3.5v9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-  function badgeHtml(status) {
-    const cls = { scheduled: 'badge-scheduled', confirmed: 'badge-confirmed',
-      completed: 'badge-completed', no_show: 'badge-no-show', cancelled: 'badge-cancelled' }[status] || 'badge-scheduled';
-    return `<span class="vf-badge ${cls}">${BADGE_ICONS[status] || ''}${esc(STATUS_LABEL[status] || status)}</span>`;
-  }
-
-
-  function badgeHtml(status) {
-    const cls = { scheduled: 'badge-scheduled', confirmed: 'badge-confirmed',
-      completed: 'badge-completed', no_show: 'badge-no-show', cancelled: 'badge-cancelled' }[status] || 'badge-scheduled';
-    return `<span class="vf-badge ${cls}">${BADGE_ICONS[status] || ''}${esc(DOCK_STATUS_LABEL[status] || status)}</span>`;
-  }
-
-
-  function getSimulatedDate() { return TODAY; }
-  function toDateTime(v) { return new Date(`${v.date}T${v.time || '00:00'}`); }
-  function fmtTime(v) { return toDateTime(v).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
-
-  function fmtEndTime(timeStr, mins = 30) {
-    const [h, m] = timeStr.split(':').map(Number);
-    return new Date(2000, 0, 1, h, m + mins).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-  }
-  function endTime24(timeStr, mins = 30) {
-    const [h, m] = timeStr.split(':').map(Number);
-    const d = new Date(2000, 0, 1, h, m + mins);
-    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-  }
-
-  function fmtScheduleLabel(v) {
-    const today = new Date(`${getSimulatedDate()}T12:00`);
-    const d = new Date(`${v.date}T12:00`);
-    const diff = Math.round((d - today) / 86400000);
-    let day = diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : diff === -1 ? 'Yesterday'
-      : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-    return `${day}, ${fmtTime(v)} - ${fmtEndTime(v.time, v.duration || 30)}`;
-  }
-
-
-  function viewerInitials(name) {
-    return name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  }
-  function viewerFirstName(name) { return name.split(/\s+/)[0]; }
-
-  const TOAST_ICONS = {
-    positive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>',
-    informative: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-    neutral: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-    negative: '!'
-  };
-
-  function toastTypeClass(type) {
-    if (type === 'success' || type === 'positive') return 'toast-positive';
-    if (type === 'danger' || type === 'negative') return 'toast-negative';
-    if (type === 'info' || type === 'informative') return 'toast-informative';
-    if (type === 'warning') return 'toast-warning';
-    if (type === 'neutral') return 'toast-neutral';
-    return 'toast-positive';
-  }
-
-  function toastIconKey(type) {
-    if (type === 'danger' || type === 'negative' || type === 'warning') return 'negative';
-    if (type === 'info' || type === 'informative') return 'informative';
-    if (type === 'neutral') return 'neutral';
-    return 'positive';
-  }
-
-  function dismissToast() {
-    const t = $('#toast');
-    if (!t) return;
-    clearTimeout(t._timer);
-    t.classList.remove('is-visible');
-  }
-
-  function showToast(title, msg, type = 'success') {
-    const t = $('#toast');
-    const icon = $('#toast-icon');
-    if (!t) return;
-
-    const variant = toastTypeClass(type);
-    const iconKey = toastIconKey(type);
-
-    t.className = `toast ${variant} is-visible`;
-    $('#toast-title').textContent = title;
-    $('#toast-msg').textContent = msg || '';
-    if (icon) icon.innerHTML = TOAST_ICONS[iconKey];
-
-    clearTimeout(t._timer);
-    t._timer = setTimeout(dismissToast, 5000);
-  }
-
-  // ── Dock rendering ────────────────────────────────────────────────────
-  function getSelected() { return VIEWINGS.find(v => v.id === selectedId); }
-
-  function activityAvatarHtml(agents) {
-    return `<div class="activity-avatars">${agents.map((a, i) =>
-      `<div class="avatar" style="background:var(--purple-${i===0?'600':'200'});color:${i===0?'#fff':'var(--purple-700)'};width:22px;height:22px;font-size:9px;">${esc(a)}</div>`
-    ).join('')}</div>`;
-  }
-
-  function getActivityEntries(v) {
-    return v.activity.length ? v.activity : [{ agents: ['JA'], text: 'No activity yet', time: '' }];
-  }
-
-  function activityEntryHtml(e) {
-    return `<div class="activity-entry">
-      ${activityAvatarHtml(e.agents)}
-      <span class="text-body activity-text">${esc(e.text)}</span>
-      ${e.time ? `<span class="text-body activity-time">${esc(e.time)}</span>` : ''}
-    </div>`;
-  }
-
-  function buildDockHeroHtml(v) {
-    const agentName = v.agent || 'Towers Wills';
-    const logisticsHtml = `
-      <div class="dock-hero-logistics">
-        <div class="dock-hero-detail-row">
-          <span>Accompanied by</span><span>${esc(v.accompaniedBy || v.type)}</span>
-        </div>
-        <div class="dock-hero-detail-row">
-          <span>Assigned agent</span>
-          <span class="dock-hero-agent-val">
-            <span class="avatar dock-hero-agent-avatar">${esc(viewerInitials(agentName))}</span>
-            ${esc(agentName)}
-          </span>
-        </div>
-      </div>`;
-
-    return `
-      <div class="dock-hero">
-        <div class="dock-hero-top">
-          <div class="avatar dock-hero-avatar">${esc(viewerInitials(v.viewer))}</div>
-          <div class="dock-hero-meta">
-            <div class="dock-hero-name-row">
-              <div class="dock-hero-name-stack">
-                <h2 class="text-h3">${esc(v.viewer)}</h2>
-                <p class="text-body dock-hero-schedule">${esc(fmtScheduleLabel(v))}</p>
-              </div>
-              ${badgeHtml(v.status)}
-            </div>
-          </div>
-        </div>
-      </div>
-      ${logisticsHtml}`;
-  }
-
-  function buildActivityPreviewHtml(v) {
-    const all = getActivityEntries(v);
-    const preview = all.slice(0, 2);
-    const showViewAll = all.length > 2;
-    return `
-      <div class="dock-section dock-section--activity">
-        <div class="dock-section-heading">
-          <h3 class="text-h2">Activity Log</h3>
-          <span class="dock-section-heading-line"></span>
-        </div>
-        <div class="activity-list" id="dock-activity-list">
-          ${preview.map(activityEntryHtml).join('')}
-        </div>
-        ${showViewAll ? `
-          <div class="activity-view-all-wrap">
-            <button type="button" class="activity-view-all" id="dock-activity-all">
-              View Full Activity
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>` : ''}
-      </div>`;
-  }
-
-  function buildActivityFullHtml(v) {
-    const all = getActivityEntries(v);
-    return `
-      <div class="dock-section dock-section--activity-full">
-        <div class="activity-list activity-list--full" id="dock-activity-list-full">
-          ${all.map(activityEntryHtml).join('')}
-        </div>
-      </div>`;
-  }
-
-  function setDockHeaderMode(mode) {
-    const title = $('#dock-header-title');
-    const back = $('#dock-activity-back');
-    const menu = $('#dock-menu-wrap');
-    const autosaveWrap = $('#dock-autosave-wrap');
-    const isActivity = mode === 'activity';
-    if (title) title.textContent = isActivity ? 'Activity Log' : 'Viewing Details';
-    if (back) back.hidden = !isActivity;
-    if (menu) menu.hidden = isActivity;
-    if (autosaveWrap) {
-      if (isActivity) {
-        autosaveWrap.hidden = true;
-      } else {
-        const selected = getSelected();
-        autosaveWrap.hidden = !(selected && selected.status === 'completed');
-      }
-    }
-  }
-
-  function updateDockAutosaveVisibility(v) {
-    const wrap = $('#dock-autosave-wrap');
-    if (!wrap) return;
-    const show = v && v.status === 'completed' && !dockActivityFullView;
-    wrap.hidden = !show;
-    if (!show) setAutosaveStatus('idle');
-  }
-
-  function updateDockMenu(v) {
-    const dd = $('#dock-dropdown');
-    if (!dd || !v) return;
-
-    const statusActions = ['mark-confirmed', 'mark-completed', 'mark-noshow', 'cancel-viewing'];
-    const editActions = ['reschedule', 'schedule-new', 'edit-applicant', 'delete-viewing'];
-    const setHidden = (sel, hidden) => { const el = dd.querySelector(sel); if (el) el.hidden = hidden; };
-
-    $$('.dock-dd-item', dd).forEach(el => { el.hidden = false; });
-
-    if (v.status === 'scheduled') {
-      setHidden('[data-action="mark-completed"]', true);
-      setHidden('[data-action="schedule-new"]', true);
-    } else if (v.status === 'confirmed') {
-      setHidden('[data-action="mark-confirmed"]', true);
-      setHidden('[data-action="schedule-new"]', true);
-    } else if (v.status === 'completed') {
-      statusActions.forEach(a => setHidden(`[data-action="${a}"]`, true));
-      setHidden('[data-action="schedule-new"]', true);
-      setHidden('[data-action="delete-viewing"]', true);
-    } else if (v.status === 'no_show') {
-      statusActions.forEach(a => setHidden(`[data-action="${a}"]`, true));
-      setHidden('[data-action="reschedule"]', true);
-      setHidden('[data-action="delete-viewing"]', true);
-    } else if (v.status === 'cancelled') {
-      statusActions.forEach(a => setHidden(`[data-action="${a}"]`, true));
-      setHidden('[data-action="reschedule"]', true);
-    }
-
-    const anyStatusVisible = statusActions.some(a => !dd.querySelector(`[data-action="${a}"]`)?.hidden);
-    const anyEditVisible = editActions.some(a => !dd.querySelector(`[data-action="${a}"]`)?.hidden);
-
-    setHidden('#dock-dd-status-section', !anyStatusVisible);
-    setHidden('#dock-dd-sep', !anyStatusVisible || !anyEditVisible);
-    setHidden('#dock-dd-edit-section', !anyEditVisible);
-  }
-
-  function setDockShellState(hasSelection) {
-    const dock = $('#viewing-detail-dock');
-    const header = $('#dock-header');
-    if (dock) dock.classList.toggle('is-empty', !hasSelection);
-    if (header) header.hidden = !hasSelection;
-  }
-
-  function renderDock() {
-    const body = $('#dock-body');
-    const footer = $('#dock-footer');
-    if (!body) return;
-
-    const v = getSelected();
-
-    if (!v) {
-      dockActivityFullView = false;
-      setDockShellState(false);
-      body.innerHTML = `
-        <div class="dock-empty">
-          <div class="dock-empty-illus" aria-hidden="true">
-            <div class="dock-ghost-card dock-ghost-card--top"></div>
-            <div class="dock-ghost-card dock-ghost-card--mid"></div>
-            <div class="dock-ghost-card dock-ghost-card--bot"></div>
-            <svg class="dock-ghost-cursor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 3l14 9-7 1-3 7L5 3z"/></svg>
-          </div>
-          <div class="dock-empty-text">
-            <p class="text-h3 dock-empty-title">Nothing selected yet</p>
-            <p class="text-body dock-empty-sub">Pick a viewing from the list to see the full details</p>
-          </div>
-        </div>`;
-      if (footer) footer.innerHTML = '';
-      return;
-    }
-
-    setDockShellState(true);
-
-    updateDockMenu(v);
-
-    if (dockActivityFullView) {
-      setDockHeaderMode('activity');
-      body.innerHTML = buildActivityFullHtml(v);
-      if (footer) footer.innerHTML = '';
-      $('#dock-activity-back')?.addEventListener('click', () => {
-        dockActivityFullView = false;
-        renderDock();
-      });
-      
-      
-      
-      return;
-    }
-
-    setDockHeaderMode('details');
-
-    const activityHtml = buildActivityPreviewHtml(v);
-
-    updateDockAutosaveVisibility(v);
-
-    const assessmentHtml = v.status === 'completed' ? `
-      <div class="assessment-section">
-        <div class="assessment-header">
-          <p class="text-h2 assessment-title">Applicant Assessment</p>
-          <span class="assessment-heading-line"></span>
-        </div>
-        <div class="assessment-fields">
-          <div class="assessment-field">
-            <label class="dock-form-label" for="dock-feedback-notes">Feedback &amp; Notes</label>
-            <textarea class="input textarea" id="dock-feedback-notes" rows="3" placeholder="Log what the applicant said about the property and your own assessment of the viewing">${esc(v.summary)}</textarea>
-            <p class="dock-help-text">Visible to your team and vendor</p>
-          </div>
-          <div class="assessment-field assessment-field--select">
-            <label class="dock-field-regular" for="dock-interest">Interest Level</label>
-            <select class="input" id="dock-interest">
-              <option value="" ${!v.interest ? 'selected' : ''} disabled>Select interest level</option>
-              <option value="very-interested" ${v.interest === 'very-interested' ? 'selected' : ''}>Very interested</option>
-              <option value="interested" ${v.interest === 'interested' ? 'selected' : ''}>Interested</option>
-              <option value="neutral" ${v.interest === 'neutral' ? 'selected' : ''}>Neutral</option>
-              <option value="not-interested" ${v.interest === 'not-interested' ? 'selected' : ''}>Not interested</option>
-            </select>
-          </div>
-          <div class="assessment-field assessment-field--select">
-            <label class="dock-field-regular" for="dock-buying-situation">Buying Situation</label>
-            <select class="input" id="dock-buying-situation">
-              <option value="" ${!v.buyingSituation ? 'selected' : ''} disabled>Select buying situation</option>
-              ${BUYING_SITUATION_OPTIONS.map(o => `<option value="${o.value}" ${v.buyingSituation === o.value ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
-            </select>
-          </div>
-          <div class="price-toggle-row">
-            <span class="dock-form-label price-toggle-label">Price Proposed ?<span class="asterisk">*</span></span>
-            <label class="toggle-wrap" aria-label="Price proposed">
-              <input type="checkbox" class="toggle-input" id="dock-price-proposed" ${v.priceProposed ? 'checked' : ''}>
-              <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            </label>
-          </div>
-          <div class="assessment-field dock-proposed-price" id="dock-proposed-price-wrap" ${v.priceProposed ? '' : 'hidden'}>
-            <label class="dock-form-label" for="dock-proposed-price">Proposed Price</label>
-            <div class="currency-input-wrap">
-              <span class="currency-prefix">£</span>
-              <input type="text" class="input" id="dock-proposed-price" inputmode="numeric" placeholder="Enter amount" value="${v.proposedPrice != null ? esc(String(v.proposedPrice)) : ''}">
-            </div>
-          </div>
-        </div>
-      </div>` : '';
-
-    const noShowHtml = v.status === 'no_show' ? `
-      <div class="dock-section">
-        <p class="rebook-meta">Rebook attempt ${v.rebook} of 3</p>
-        ${v.rebook >= 3 ? `<p class="rebook-warn">You've reached the maximum rebook attempts. Mark ${esc(viewerFirstName(v.viewer))} as a lost lead or schedule a new viewing if you've spoken to them directly.</p>` : ''}
-      </div>` : '';
-
-    const cancelledHtml = v.status === 'cancelled' ? `
-      <div class="dock-section">
-        ${v.cancelReason ? `<span class="dock-form-label">Cancellation reason</span>
-        <p class="text-body" style="text-align:left;margin-top:var(--space-1);">${esc(v.cancelReason)}</p>` : ''}
-        <p class="rebook-meta"${v.cancelReason ? ' style="margin-top:var(--space-3)"' : ''}>Rebook attempt ${v.rebook || 0} of 3</p>
-        ${(v.rebook || 0) >= 3 ? `<p class="rebook-warn">You've reached the maximum rebook attempts. Mark ${esc(viewerFirstName(v.viewer))} as a lost lead or schedule a new viewing if you've spoken to them directly.</p>` : ''}
-      </div>` : '';
-
-    const lostHtml = v.leadLost && v.lostReason ? `
-      <div class="dock-section">
-        <span class="dock-form-label">Reason for losing the lead</span>
-        <p class="text-body" style="text-align:left;margin-top:var(--space-1);">${esc(v.lostReason)}</p>
-      </div>` : '';
-
-    const agentNotesHtml = `
-      <div class="dock-section dock-section--agent-notes">
-        <span class="dock-agent-notes-label">Agent notes</span>
-        <textarea class="input textarea" id="dock-agent-notes" rows="4" placeholder="Access instructions, notes for the viewing…" aria-label="Agent notes">${esc(v.notesInternal)}</textarea>
-        <p class="dock-help-text">Only visible to your team, not shared with vendor</p>
-      </div>`;
-
-    body.innerHTML = `
-      <div class="dock-block-top">
-        ${buildDockHeroHtml(v)}
-        ${agentNotesHtml}
-      </div>
-      ${noShowHtml}
-      ${cancelledHtml}
-      ${lostHtml}
-      ${assessmentHtml}
-      ${activityHtml}`;
-
-    $('#dock-price-proposed')?.addEventListener('change', (e) => {
-      v.priceProposed = e.target.checked;
-      const wrap = $('#dock-proposed-price-wrap');
-      if (wrap) wrap.hidden = !v.priceProposed;
-      if (v.status === 'completed') scheduleAssessmentAutosave(v);
-    });
-    if (v.status === 'completed') {
-      bindAssessmentAutosave(v);
-      if (v.summary || v.interest || v.buyingSituation || v.priceProposed || v.notesInternal) {
-        setAutosaveStatus('saved');
-      } else {
-        setAutosaveStatus('idle');
-      }
-    } else {
-      setAutosaveStatus('idle');
-    }
-    $('#dock-activity-all')?.addEventListener('click', () => {
-      dockActivityFullView = true;
-      renderDock();
-    });
-    if (v.status !== 'completed') {
-      $('#dock-agent-notes')?.addEventListener('blur', (e) => { v.notesInternal = e.target.value.trim(); });
-    }
-
-    const fn = viewerFirstName(v.viewer);
-    if (v.status === 'scheduled') maybeAutoSendConfirmation(v);
-    const autoEmailOn = isAutoConfirmationEnabled();
-
-    if (footer) {
-      let ctaHtml = '';
-      if (v.status === 'scheduled' || v.status === 'confirmed') {
-        if (v.rescheduleRequested) {
-          ctaHtml = `<button type="button" class="btn btn-primary dock-cta" id="dock-cta">Reschedule</button>`;
-        } else if (v.status === 'scheduled') {
-          if (autoEmailOn) {
-            ctaHtml = `<p class="dock-footer-note dock-confirmation-auto">Confirmation email was sent automatically because you have enabled automatic reminders and confirmation emails in Settings.</p>`;
-          } else {
-            const sentLabel = v.confirmationSent ? 'Resend Confirmation Email' : 'Send Confirmation Email';
-            ctaHtml = `
-              <button type="button" class="btn btn-primary dock-cta" id="dock-cta">
-                ${sentLabel}
-                <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M3 5h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4"/><path d="M3 6l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-              </button>
-              <p class="dock-confirmation-copy">The confirmation email is the main touchpoint — it lets ${esc(fn)} confirm, reschedule, or cancel the viewing.</p>`;
-          }
-        } else {
-          ctaHtml = `<p class="dock-footer-note">Marks as complete automatically after the scheduled viewing ends. To complete early, use the menu above.</p>`;
-        }
-      } else if (v.status === 'no_show') {
-        const rebookDisabled = v.rebookEmailSentAt >= v.rebook && v.rebook > 0 && v.rebook < 3;
-        const primary = v.rebook >= 3 ? (v.leadLost ? '' : 'Mark as Lost') : 'Send Rebook Email';
-        ctaHtml = `
-          ${primary ? `<button type="button" class="btn btn-primary dock-cta" id="dock-cta" ${rebookDisabled && v.rebook < 3 ? 'disabled' : ''}>${primary}</button>` : ''}
-          ${!v.leadLost ? `<button type="button" class="btn btn-secondary dock-cta" id="dock-cta-secondary" style="margin-top:${primary ? '8px' : '0'};">Schedule New Viewing</button>` : ''}
-          ${rebookDisabled && v.rebook < 3 ? '<p class="dock-footer-note">Rebook email already sent for this attempt.</p>' : ''}`;
-      } else if (v.status === 'completed') {
-        ctaHtml = `<button type="button" class="btn btn-secondary dock-cta" id="dock-mark-noshow">Mark as no show</button>`;
-      } else if (v.status === 'cancelled' && !v.leadLost) {
-        const rebookMaxed = (v.rebook || 0) >= 3;
-        const rebookDisabled = !rebookMaxed && v.rebookEmailSentAt >= v.rebook && v.rebook > 0;
-        ctaHtml = `
-          <button type="button" class="btn btn-primary dock-cta" id="dock-cta">Schedule a New Viewing</button>
-          <button type="button" class="btn btn-secondary dock-cta" id="dock-cta-secondary"${rebookDisabled || rebookMaxed ? ' disabled' : ''}>Send Rebook Email</button>
-          <button type="button" class="btn btn-tertiary dock-cta" id="dock-cta-mark-lost">Mark as Lost</button>
-          ${rebookDisabled ? '<p class="dock-footer-note">Rebook email already sent for this attempt.</p>' : ''}`;
-      }
-
-      footer.innerHTML = ctaHtml
-        ? `<div class="dock-footer">${ctaHtml}</div>`
-        : '';
-
-      $('#dock-cta')?.addEventListener('click', () => {
-        if (v.rescheduleRequested && (v.status === 'scheduled' || v.status === 'confirmed')) {
-          openRescheduleModal(v);
-          return;
-        }
-        if (v.status === 'scheduled') {
-          sendConfirmationEmail(v, { automatic: false });
-          showToast('Confirmation sent', `${fn} will receive options to confirm, reschedule, or cancel. Switch to Viewer to simulate their response.`);
-        } else if (v.status === 'no_show') {
-          if (v.rebook >= 3) {
-            openMarkLostModal(v);
-            return;
-          } else if (v.rebookEmailSentAt >= v.rebook && v.rebook > 0) {
-            showToast('Already sent', `Rebook email already sent for attempt ${v.rebook}.`, 'warning');
-            return;
-          } else {
-            v.rebook += 1;
-            v.rebookEmailSentAt = v.rebook;
-            v.activity.unshift({ agents: ['JA'], text: `Rebook email sent to ${fn} — attempt ${v.rebook} of 3`, time: 'Just now' });
-            showToast('Rebook email sent', `Attempt ${v.rebook}/3 sent to ${v.viewer}.`);
-          }
-        } else if (v.status === 'cancelled') {
-          openModal('modal-new-viewing');
-          return;
-        }
-        renderAll(); renderDock();
-      });
-      $('#dock-cta-secondary')?.addEventListener('click', () => {
-        if (v.status === 'cancelled') {
-          if ((v.rebook || 0) >= 3) {
-            showToast('Maximum reached', 'You have used all 3 rebook attempts.', 'warning');
-            return;
-          }
-          if (v.rebookEmailSentAt >= v.rebook && v.rebook > 0) {
-            showToast('Already sent', `Rebook email already sent for attempt ${v.rebook}.`, 'warning');
-            return;
-          }
-          v.rebook = (v.rebook || 0) + 1;
-          v.rebookEmailSentAt = v.rebook;
-          v.activity.unshift({ agents: ['JA'], text: `Rebook email sent to ${fn} — attempt ${v.rebook} of 3`, time: 'Just now' });
-          showToast('Rebook email sent', `Attempt ${v.rebook}/3 sent to ${v.viewer}.`);
-          renderAll();
-          renderDock();
-          return;
-        }
-        openModal('modal-new-viewing');
-      });
-      $('#dock-cta-mark-lost')?.addEventListener('click', () => openMarkLostModal(v));
-      $('#dock-mark-noshow')?.addEventListener('click', () => {
-        markViewingAsNoShow(v);
-        showToast('Status updated', `${v.viewer} marked as No Show.`);
-        renderAll();
-        renderDock();
-      });
-    }
-    
-    
-    
-  }
-
-
-  function isAutoConfirmationEnabled() { return false; }
-  function sendConfirmationEmail(v) {
-    v.confirmationSent = true;
-    v.activity.unshift({ agents: ['JA'], text: 'Confirmation email sent to ' + v.viewer, time: 'Just now' });
-  }
-  function maybeAutoSendConfirmation() { return false; }
-  function markViewingAsComplete(v, { automatic = false } = {}) {
-    const fn = viewerFirstName(v.viewer);
-    v.status = 'completed';
-    v.rescheduleRequested = false;
-    const text = automatic
-      ? `${fn} completed the viewing`
-      : `John Agent marked ${fn}'s viewing as complete`;
-    v.activity.unshift({ agents: ['JA'], text, time: 'Just now' });
-  }
-
-
-  function markViewingAsNoShow(v) {
-    v.status = 'no_show';
-    if (!v.rebook) { v.rebook = 0; v.rebookEmailSentAt = 0; }
-    v.activity.unshift({ agents: ['JA'], text: 'Marked ' + v.viewer + ' as no show', time: 'Just now' });
-  }
-  let assessmentAutosaveTimer = null;
-
-  function setAutosaveStatus(state, message) {
-    const el = $('#dock-autosave');
-    if (!el) return;
-    const icon = el.querySelector('.autosave-status-icon');
-    const text = el.querySelector('.autosave-status-text');
-    if (state === 'idle') {
-      el.hidden = true;
-      el.className = 'autosave-status';
-      return;
-    }
-    el.hidden = false;
-    el.className = `autosave-status is-${state}`;
-    if (text) text.textContent = message || (state === 'saving' ? 'Saving…' : state === 'saved' ? 'Saved' : 'Couldn\'t save');
-    if (icon) {
-      icon.innerHTML = state === 'saved'
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
-        : state === 'error'
-          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-          : '';
-    }
-  }
-
-  function persistAssessment(v) {
-    v.notesInternal = $('#dock-agent-notes')?.value.trim() || v.notesInternal;
-    v.summary = $('#dock-feedback-notes')?.value.trim() || '';
-    v.interest = $('#dock-interest')?.value || null;
-    v.buyingSituation = $('#dock-buying-situation')?.value || null;
-    v.priceProposed = $('#dock-price-proposed')?.checked ?? false;
-    const priceRaw = $('#dock-proposed-price')?.value.replace(/[^\d]/g, '') || '';
-    if (v.priceProposed && !priceRaw) {
-      setAutosaveStatus('error', 'Enter proposed price');
-      return false;
-    }
-    v.proposedPrice = v.priceProposed && priceRaw ? Number(priceRaw) : null;
-    if (v.proposedPrice != null) v.offerPrice = v.proposedPrice;
-    setAutosaveStatus('saved');
-    renderAll();
-    
-    return true;
-  }
-
-  function scheduleAssessmentAutosave(v) {
-    setAutosaveStatus('saving');
-    clearTimeout(assessmentAutosaveTimer);
-    assessmentAutosaveTimer = setTimeout(() => persistAssessment(v), 500);
-  }
-
-  function bindAssessmentAutosave(v) {
-    const fields = '#dock-agent-notes,#dock-feedback-notes,#dock-interest,#dock-buying-situation,#dock-proposed-price';
-    $$(fields).forEach(el => {
-      el.addEventListener('input', () => scheduleAssessmentAutosave(v));
-      el.addEventListener('change', () => scheduleAssessmentAutosave(v));
-    });
-  }
-
-
-
-  function openModal() { showToast('Prototype', 'Full modal flow lives in agent-view-v5.', 'info'); }
-  function openMarkLostModal(v) { v.leadLost = true; showToast('Marked lost', v.viewer + ' marked as lost lead.', 'info'); renderAll(); }
-
-  // Show property address in dock hero (master dashboard)
-  (function () {
-    const _orig = buildDockHeroHtml;
-    buildDockHeroHtml = function (v) {
-      const p = prop(v);
-      return _orig(v) + `<div class="dock-hero-logistics"><div class="dock-hero-detail-row"><span>Property</span><span>${esc(p.address)} (${esc(p.ref)})</span></div></div>`;
-    };
-  })();
-
-  setupDockMenu();
-  setupViewingClicks();
+  setupCaseNavigation();
   renderAll();
 
 })();
