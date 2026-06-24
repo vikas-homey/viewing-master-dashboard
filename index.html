@@ -3,12 +3,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Viewings master dashboard — Homey</title>
-  <meta http-equiv="refresh" content="0; url=viewing-master-dashboard.html">
-  <link rel="canonical" href="viewing-master-dashboard.html">
-  <script>location.replace('viewing-master-dashboard.html');</script>
+  <title>Viewings prototypes — Homey</title>
+  <link rel="stylesheet" href="design-system/homeywebfoundation.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: var(--space-6);
+      font-family: var(--font-sans);
+      background: var(--bg-subtle);
+      color: var(--fg);
+    }
+    .launcher {
+      width: min(100%, 480px);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    h1 {
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-xl);
+      font-weight: var(--fw-semibold);
+      color: var(--fg-strong);
+    }
+    p {
+      margin: 0 0 var(--space-5);
+      color: var(--fg-muted);
+      line-height: 1.5;
+    }
+    .links {
+      display: grid;
+      gap: var(--space-3);
+    }
+    a.card {
+      display: block;
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+    }
+    a.card:hover {
+      border-color: var(--purple-300);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-weight: var(--fw-semibold);
+      color: var(--fg-strong);
+      margin-bottom: var(--space-1);
+    }
+    .card-desc {
+      font-size: var(--text-sm);
+      color: var(--fg-muted);
+    }
+  </style>
 </head>
 <body>
-  <p><a href="viewing-master-dashboard.html">Open viewings master dashboard</a></p>
+  <main class="launcher">
+    <h1>Viewings prototypes</h1>
+    <p>Choose a dashboard to open.</p>
+    <div class="links">
+      <a class="card" href="viewing-dashboard-homeycrm.html">
+        <div class="card-title">Homey CRM viewing dashboard</div>
+        <div class="card-desc">Tabbed list view with bulk actions inside the CRM shell.</div>
+      </a>
+      <a class="card" href="viewing-master-dashboard.html">
+        <div class="card-title">Morning command center</div>
+        <div class="card-desc">Agency-wide master dashboard with split view.</div>
+      </a>
+    </div>
+  </main>
 </body>
 </html>
